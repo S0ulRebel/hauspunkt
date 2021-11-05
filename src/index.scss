@@ -1,0 +1,23 @@
+@font-face {
+  font-family: WorkSansLight;
+  src: url('assets/fonts/WorkSans-Light.ttf');
+}
+
+@font-face {
+  font-family: WorkSansRegular;
+  src: url('assets/fonts/WorkSans-Regular.ttf');
+}
+
+@font-face {
+  font-family: WorkSansSemiBold;
+  src: url('assets/fonts/WorkSans-SemiBold.ttf');
+}
+
+* {
+  font-family: WorkSansRegular;
+  box-sizing: border-box;
+}
+
+.content-wrapper {
+  max-width: 1440px;
+}

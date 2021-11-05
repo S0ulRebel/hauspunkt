@@ -1,24 +1,27 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Suspense, useState } from "react";
+import "./App.scss";
+import RoomView from "./views/room-view/RoowView";
+import { ConfigContext, defaultConfigVlues } from "./context/config-context";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import Home from "./views/home/Home";
+import Navigation from "./components/ui/navigation/Navigation";
 
 function App() {
+  const [context, setContext] = useState(defaultConfigVlues);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <Suspense fallback={""}>
+        <ConfigContext.Provider value={[context, setContext]}>
+          <BrowserRouter>
+            <Navigation />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/config" element={<div>Config</div>} />
+              <Route path="/elements" element={<RoomView />} />
+            </Routes>
+          </BrowserRouter>
+        </ConfigContext.Provider>
+      </Suspense>
     </div>
   );
 }

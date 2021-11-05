@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>735042E9-9953-4ED8-B6F5-A2CE6B03F7E6</title>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="1440" height="96"></rect>
+        <filter x="-0.6%" y="-6.8%" width="101.2%" height="117.7%" filterUnits="objectBoundingBox" id="filter-2">
+            <feMorphology radius="0.5" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="2" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0.149019608   0 0 0 0 0.149019608   0 0 0 0 0.152941176  0 0 0 0.2 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="workflow-v1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Landingpage-v01-Copy-6" transform="translate(-405.000000, -36.000000)">
+            <rect fill="#FFFFFF" x="0" y="0" width="1440" height="810"></rect>
+            <g id="Elevation" fill-rule="nonzero" fill="black" fill-opacity="1">
+                <use filter="url(#filter-2)" xlink:href="#path-1"></use>
+            </g>
+            <rect id="Background" fill="#FFFFFF" x="0" y="0" width="1440" height="96"></rect>
+            <g id="Icons/Action/20dp/chaveron-down-Copy" transform="translate(415.000000, 46.000000) rotate(270.000000) translate(-415.000000, -46.000000) translate(405.000000, 36.000000)" fill="#332C2B">
+                <path d="M10.0975586,13.21875 C10.3075195,13.21875 10.4881836,13.1357422 10.6493164,12.9746094 L14.306543,9.22460938 C14.4334961,9.09765625 14.5018555,8.94140625 14.5018555,8.75585938 C14.5018555,8.375 14.1991211,8.07226562 13.8231445,8.07226562 C13.6375977,8.07226562 13.4618164,8.14550781 13.3250977,8.28222656 L10.1024414,11.6025391 L6.87490234,8.28222656 C6.73818359,8.15039062 6.56728516,8.07226562 6.37685547,8.07226562 C6.00087891,8.07226562 5.69814453,8.375 5.69814453,8.75585938 C5.69814453,8.94140625 5.76650391,9.09765625 5.89345703,9.22949219 L9.55068359,12.9746094 C9.72158203,13.140625 9.89248047,13.21875 10.0975586,13.21875 Z" id="􀆈"></path>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,21 @@
+.room-view {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-direction: row;
+
+    .controls-wrapper {
+        width: 300px;
+
+        .control-group {
+            .value-wrapper {
+                
+            }
+        }
+    }
+
+    .viewport-wrapper {
+        flex-grow: 1;
+        background-color: rebeccapurple;
+    }
+}
