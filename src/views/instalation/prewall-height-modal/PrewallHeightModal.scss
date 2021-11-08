@@ -1,0 +1,23 @@
+.prewall-height-modal {
+    padding: 45px 28px;
+    background-color: white;
+    display: inline-block;
+    width: 432px;
+    align-self: center;
+    margin: auto;
+
+    h2 {margin-bottom: 52px;}
+
+    .height-option {
+        font-family: WorkSansRegular;
+        font-size: 19px;
+        line-height: 28px;
+        margin-bottom: 31px;
+        padding-left: 20px;
+
+        &:hover {
+            color: #D8272B;
+            cursor: pointer;
+        }
+    }
+}

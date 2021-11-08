@@ -8,7 +8,6 @@
 
   .content-wrapper {
       flex-grow: 1;
-      max-width: 1440px;
       padding: 0 130px;
       display: flex;
       flex-direction: row;
@@ -42,6 +41,14 @@
 
     &.active {
       color: #d8272b;
+    }
+  }
+}
+
+@media screen and (max-width: 1440px) {
+  .main-navigation {
+    .content-wrapper {
+      padding: 0 45px;
     }
   }
 }

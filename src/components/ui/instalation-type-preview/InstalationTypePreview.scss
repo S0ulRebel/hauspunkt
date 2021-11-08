@@ -1,0 +1,61 @@
+.instalation-type-title {
+  width: 250px;
+  color: #0C0C0D;
+  font-family: WorkSansMedium;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 32px;
+  margin-top: 10px;
+}
+
+.instalation-type-preview {
+  height: 250px;
+  width: 250px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 16px 0 rgba(12,12,13,0.1);
+  
+  &:hover {
+    cursor: pointer;
+  }
+
+  .prewall {
+      background-color: #971B1E;
+      height: 76px;
+      width: 181px;
+      top: 121px;
+      left: 35px;
+      position: absolute;
+      z-index: 1;
+
+    &.full-height {
+        height: 136px;
+        top: 61px;
+    }
+
+    &.room-divider {
+        height: 76px;
+        width: 94px;
+        top: 120px;
+        left: 35px;
+    }
+
+    &.partition-wall {
+        height: 136px;
+        width: 94px;
+        top: 60px;
+        left: 77px;
+    }
+  }
+
+  .schacht {
+    position: absolute;
+    height: 136px;
+    width: 75px;
+    z-index: 1;
+    background-color: #971B1E;
+    top: 61px;
+    left: 35px;
+  }
+}

@@ -12,8 +12,8 @@ const Home = () => {
   return (
     <div id="home-page" className="content-wrapper">
       <div className="text-wrapper">
-        <h1>{t("landingPage.title")}</h1>
-        <p>{t("landingPage.text")}</p>
+        <h1 className="pre-line">{t("landingPage.title")}</h1>
+        <p className="medium">{t("landingPage.text")}</p>
         <Button text={t("landingPage.button")} clickHandler={() => navigate("/config")} />
       </div>
       <div className="image-wrapper">

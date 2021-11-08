@@ -1,23 +1,64 @@
 @font-face {
   font-family: WorkSansLight;
-  src: url('assets/fonts/WorkSans-Light.ttf');
+  src: url("assets/fonts/WorkSans-Light.ttf");
 }
 
 @font-face {
   font-family: WorkSansRegular;
-  src: url('assets/fonts/WorkSans-Regular.ttf');
+  src: url("assets/fonts/WorkSans-Regular.ttf");
+}
+
+@font-face {
+  font-family: WorkSansMedium;
+  src: url("assets/fonts/WorkSans-Medium.ttf");
 }
 
 @font-face {
   font-family: WorkSansSemiBold;
-  src: url('assets/fonts/WorkSans-SemiBold.ttf');
+  src: url("assets/fonts/WorkSans-SemiBold.ttf");
 }
 
 * {
-  font-family: WorkSansRegular;
   box-sizing: border-box;
+  color: #0c0c0d;
+  font-family: WorkSansRegular;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  font-family: WorkSansLight;
+  font-size: 54px;
+  line-height: 54px;
+}
+
+h2 {
+  font-size: 32px;
+  line-height: 32px;
+  font-family: WorkSansSemiBold;
+}
+
+p {
+  color: #0c0c0d;
+  font-family: WorkSansRegular;
+  letter-spacing: 0;
+}
+
+p, p.small {
+  font-size: 16;
+  line-height: 22px;
+}
+
+p.medium {
+  font-size: 19px;
+  line-height: 28px;
 }
 
 .content-wrapper {
   max-width: 1440px;
+  overflow: hidden;
+}
+
+.pre-line {
+  white-space: pre-line;
 }

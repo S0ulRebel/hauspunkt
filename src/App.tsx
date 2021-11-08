@@ -1,6 +1,7 @@
 import React, { Suspense, useState } from "react";
 import "./App.scss";
-import RoomView from "./views/room-view/RoowView";
+import RoomView from "./views/elements/RoowView";
+import InstalationView from "./views/instalation/InstalationView";
 import { ConfigContext, defaultConfigVlues } from "./context/config-context";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import Home from "./views/home/Home";
@@ -16,7 +17,7 @@ function App() {
             <Navigation />
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/config" element={<div>Config</div>} />
+              <Route path="/config" element={<InstalationView />} />
               <Route path="/elements" element={<RoomView />} />
             </Routes>
           </BrowserRouter>

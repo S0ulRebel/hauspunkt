@@ -4,5 +4,23 @@
     "title": "Willkommen\nbeim HAUSPUNKT\nBad-Konfigurator.",
     "text": "Hier können Sie mit nur wenigen Klicks Ihre individuelle Einbausituation im Bad visualisieren und bekommen zeitgleich einen Materialauszug.",
     "button": "ZUM KONFIGURATOR"
+  },
+  "instalationPage": {
+    "title": "Einbausituation",
+    "text1": "Bitte wählen Sie Ihre\nEinbausituation aus.",
+    "text2": "Falls keine der angebotenen Einbausituationen für Sie zutreffend ist, nehmen Sie Kontakt mit uns auf.",
+    "button": "KONTAKT",
+    "instalationTypes": {
+      "fullHeightPrewall": "Raumhohe Vorwand",
+      "halfHeightPrewall": "Halbhohe Vorwand",
+      "halfHeightPrewallWithSchacht": "Halbhohe Vorwand mit Schacht",
+      "roomDivider": "Raumteiler",
+      "partitionWall": "Trennwand"
+    },
+    "modal": {
+      "title": "Halbhohe Vorwand",
+      "standardHeight": "Standardhöhe",
+      "individualHeight": "Individuelle Vorwandhöhe"
+    }
   }
 }

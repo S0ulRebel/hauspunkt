@@ -6,33 +6,35 @@
   .text-wrapper {
     width: 710px;
     padding: 100px 60px 0 130px;
+    box-sizing: border-box;
 
     h1 {
-      height: 192px;
       width: 500px;
-      color: #0c0c0d;
-      font-family: WorkSansLight;
-      font-size: 54px;
-      font-weight: 300;
-      letter-spacing: 0;
+      max-width: 500px;
+      display: block;
       line-height: 64px;
-      white-space: pre-line;
+      margin-top: 0;
+      margin-bottom: 85px;
     }
 
     p {
-      height: 84px;
-      width: 500px;
-      color: #0c0c0d;
-      font-family: WorkSansRegular;
-      font-size: 19px;
-      letter-spacing: 0;
-      line-height: 28px;
-      margin-top: 85px;
       margin-bottom: 85px;
+      margin-top: 0;
     }
   }
 
   .image-wrapper {
     flex-grow: 1;
+    max-width: 730px;
+    overflow: hidden;
+  }
+}
+
+@media screen and (max-width: 1440px) {
+  #home-page {
+    .text-wrapper {
+      padding-left: 45px;
+      padding-right: 45px;
+    }
   }
 }

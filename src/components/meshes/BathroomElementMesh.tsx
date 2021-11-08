@@ -47,9 +47,6 @@ const BathroomElementMesh = ({
       console.log(e, startPosition);
       const width = dimensions[0];
       const newX = clamp(e.object.position.x, minX, maxX);
-      // const x = newX;
-      // const y = e.object.parent.position.y;
-      // const z = e.object.parent.position.z;
       e.object.position.x = newX;
       e.object.position.y = e.object.parent.position.y;
       e.object.position.z = e.object.parent.position.z;
@@ -61,9 +58,6 @@ const BathroomElementMesh = ({
     });
     controls?.addEventListener("dragend", (e) => {
       setActive(false);
-      // e.object.position.x = e.object.parent.position.x;
-      // e.object.position.x = e.object.parent.position.y;
-      // e.object.position.x = e.object.parent.position.z;
     });
   }, [controls]);
 
