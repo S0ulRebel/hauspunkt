@@ -30,6 +30,7 @@ const InstalationView = () => {
 
   const handlePrewallHeightSelection = (height: number) => {
     closeStandardHeightsModal();
+    navigate("/elements");
   };
 
   const instalationTypes = [];

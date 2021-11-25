@@ -4,6 +4,7 @@ import BathroomElement from "../models/BathroomElement";
 export interface Room {
   roomWidth: number;
   roomHeight: number;
+  floorThickness: number;
   wallThickness: number;
   roomDepth: number;
   minRoomWidth: number;
@@ -40,33 +41,37 @@ export interface IConfigContext {
 
 export const defaultConfigVlues = {
   room: {
-    roomWidth: 2.0,
-    roomHeight: 3.0,
-    minRoomWidth: 2.0,
-    maxRoomWidth: 8.0,
-    minRoomHeight: 2.0,
-    maxRoomHeight: 4.0,
-    wallThickness: 0.2,
-    roomDepth: 2.0,
+    roomWidth: 200,
+    roomHeight: 300,
+    floorThickness: 1,
+    minRoomWidth: 200,
+    maxRoomWidth: 800,
+    minRoomHeight: 200,
+    maxRoomHeight: 400,
+    minFloorThickness: 1,
+    maxFloorThickness: 20,
+    wallThickness: 5,
+    roomDepth: 800,
     prewall: true,
     schacht: false,
   },
   prewall: {
-    prewallWidth: 2.0,
-    minPrewallWidth: 1.0,
-    minPrewallHeight: 0.86,
-    prewallHeight: 1.0,
-    prewallThickness: 0.2,
+    prewallWidth: 200,
+    minPrewallWidth: 100,
+    minPrewallHeight: 86,
+    prewallHeight: 100,
+    prewallThickness: 20,
     prewallLeft: 0,
     prewallRight: 0,
   },
   schacht: {
     side: "left",
-    schachtWidth: 0.5,
-    schachtHeight: 2.0,
-    schachtThickness: 0.2,
+    schachtWidth: 50,
+    schachtHeight: 200,
+    schachtThickness: 20,
   },
   bathroomElements: [],
+  dimensionLines: [],
 };
 
 export const ConfigContext = React.createContext<any>({} as any);

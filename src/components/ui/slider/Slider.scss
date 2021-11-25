@@ -1,0 +1,34 @@
+.slider-container {
+  width: 100%;
+  height: 16px;
+  line-height: 8px;
+}
+
+/* The slider itself */
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 2px;
+  background: #0c0c0d;
+  outline: none;
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #0c0c0d;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #0c0c0d;
+  cursor: pointer;
+  border-radius: 50%;
+}

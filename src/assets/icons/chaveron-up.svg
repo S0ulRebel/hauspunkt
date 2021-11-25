@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>05365D83-6446-44C5-BDED-9D4D6DE65CB6</title>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="187" height="159" rx="2"></rect>
+        <filter x="-13.4%" y="-15.7%" width="126.7%" height="131.4%" filterUnits="objectBoundingBox" id="filter-2">
+            <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="8" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0.0473601914   0 0 0 0 0.0473601914   0 0 0 0 0.0499338344  0 0 0 0.1 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="workflow-v1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Landingpage-v01-Copy-10" transform="translate(-421.000000, -272.000000)">
+            <rect fill="#FFFFFF" x="0" y="0" width="1440" height="810"></rect>
+            <g id="Group-3" transform="translate(263.000000, 264.000000)">
+                <g id="shadow">
+                    <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                    <rect stroke="#A4A5A7" stroke-width="1" fill="#FFFFFF" fill-rule="evenodd" x="-0.5" y="-0.5" width="188" height="160" rx="2"></rect>
+                </g>
+                <g id="Icons/Action/20dp/chaveron-down-Copy" transform="translate(168.000000, 18.000000) rotate(180.000000) translate(-168.000000, -18.000000) translate(158.000000, 8.000000)" fill="#332C2B">
+                    <path d="M10.0975586,13.21875 C10.3075195,13.21875 10.4881836,13.1357422 10.6493164,12.9746094 L14.306543,9.22460938 C14.4334961,9.09765625 14.5018555,8.94140625 14.5018555,8.75585938 C14.5018555,8.375 14.1991211,8.07226562 13.8231445,8.07226562 C13.6375977,8.07226562 13.4618164,8.14550781 13.3250977,8.28222656 L10.1024414,11.6025391 L6.87490234,8.28222656 C6.73818359,8.15039062 6.56728516,8.07226562 6.37685547,8.07226562 C6.00087891,8.07226562 5.69814453,8.375 5.69814453,8.75585938 C5.69814453,8.94140625 5.76650391,9.09765625 5.89345703,9.22949219 L9.55068359,12.9746094 C9.72158203,13.140625 9.89248047,13.21875 10.0975586,13.21875 Z" id="􀆈"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

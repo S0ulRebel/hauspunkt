@@ -33,12 +33,7 @@ const Room = ({ roomPosition }: RoomProps) => {
     <>
       <Suspense fallback={null}>
         <group position={roomPosition}>
-          <LigthBulb
-            intensity={0.4}
-            position={
-              new Vector3(0, 0, 0)
-            }
-          />
+          <LigthBulb intensity={0.4} position={new Vector3(0, 0, 0)} />
           <Wall
             key="left"
             dimensions={[roomHeight + wallThickness, wallThickness, roomDepth]}
@@ -47,19 +42,16 @@ const Room = ({ roomPosition }: RoomProps) => {
               wallThickness / 2,
               0,
             ]}
-            rotation={[0, 0, 0]}
           />
           <Wall
             key="right"
             dimensions={[roomHeight + wallThickness, wallThickness, roomDepth]}
             position={[roomWidth / 2 + wallThickness / 2, wallThickness / 2, 0]}
-            rotation={[0, 0, 0]}
           />
           <Wall
             key="back"
             dimensions={[roomHeight, roomWidth, wallThickness]}
             position={[0, 0, -roomDepth / 2 - wallThickness / 2]}
-            rotation={[0, 0, 0]}
           />
           <Wall
             key="floor"
@@ -69,13 +61,11 @@ const Room = ({ roomPosition }: RoomProps) => {
               roomDepth,
             ]}
             position={[0, -roomHeight / 2 - wallThickness / 2, 0]}
-            rotation={[0, 0, 0]}
           />
           <Wall
             key="ceiling"
             dimensions={[wallThickness, roomWidth, roomDepth]}
             position={[0, roomHeight / 2 + wallThickness / 2, 0]}
-            rotation={[0, 0, 0]}
           />
           {prewall && (
             <Wall
@@ -86,7 +76,6 @@ const Room = ({ roomPosition }: RoomProps) => {
                 -roomHeight / 2 + prewallHeight / 2,
                 -roomDepth / 2 + wallThickness + prewallThickness / 2,
               ]}
-              rotation={[0, 0, 0]}
             />
           )}
           {schacht && (
@@ -98,7 +87,6 @@ const Room = ({ roomPosition }: RoomProps) => {
                 -roomHeight / 2 + schachtHeight / 2,
                 -roomDepth / 2 + wallThickness + schachtThickness / 2,
               ]}
-              rotation={[0, 0, 0]}
             />
           )}
           {configContext.bathroomElements.map(

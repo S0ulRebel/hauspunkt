@@ -1,4 +1,10 @@
-import React from "react";
+import React, { useRef } from "react";
+import Slider from "../slider/Slider";
+import SpecialInput, {
+  SpecialInputOption,
+} from "../special-input/SpecialInput";
+import Tooltip from "../tooltip/Tooltip";
+import "./DimensionsInputGroup.scss";
 
 interface DimensionsInputGroupProps {
   label: string;
@@ -6,6 +12,9 @@ interface DimensionsInputGroupProps {
   min: number;
   max: number;
   handler: (value: number) => void | any;
+  unit?: string;
+  tooltipText?: string;
+  options?: SpecialInputOption[];
 }
 
 const DimensionsInputGroup = ({
@@ -14,28 +23,40 @@ const DimensionsInputGroup = ({
   min,
   max,
   handler,
+  unit = "cm",
+  tooltipText = "",
+  options = [],
 }: DimensionsInputGroupProps) => {
+  const textInputRef = useRef<any>();
+  const handleThumbPositionChange = (e: any) => {
+    const halfWidth = textInputRef.current.clientWidth / 2;
+    textInputRef.current.style.left = e - halfWidth + "px";
+  };
   return (
     <div className="control-group">
-      <label>{label}</label>
-      <input
-        type="number"
-        value={(value * 100).toFixed()}
-        min={min * 100}
-        max={max * 100}
-        step={1}
-        onChange={(e) => handler(+e.target.value / 100)}
-      />
+      <div className="label-wrapper">
+        {tooltipText ? (
+          <Tooltip text={tooltipText}>
+            <label>{label}</label>
+          </Tooltip>
+        ) : (
+          <label>{label}</label>
+        )}
+      </div>
       <div className="value-wrapper">
-        <input
-          type="text"
-          value={(value * 100).toFixed()}
-          min={min * 100}
-          max={max * 100}
+        <Slider
+          value={value}
+          min={min}
+          max={max}
           step={1}
-          onChange={(e) => handler(+e.target.value / 100)}
+          valueChangeHandler={(e) => handler(e)}
+          positionChangeHandler={(e) => {
+            handleThumbPositionChange(e);
+          }}
         />
-        <label className="unit">{"cm"}</label>
+        <div ref={textInputRef} className="special-input-wrapper">
+          <SpecialInput value={value} unit={unit} options={options} valueChangeHandler={(v) => handler(v) } />
+        </div>
       </div>
     </div>
   );

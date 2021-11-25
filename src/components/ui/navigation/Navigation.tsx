@@ -10,13 +10,14 @@ const Navigation = () => {
       <NavLink to="/">Konfigurator</NavLink>,
       <NavLink to="/config">Einbausituation</NavLink>,
       <NavLink to="/elements">Elemente</NavLink>,
+      <NavLink to="/result">Ergebnis</NavLink>,
     ];
     const elements = links.slice(0, endIndex).map((e, index) => {
       if (index < endIndex - 1)
         return (
           <>
             {e}
-            <span>
+            <span key={index}>
                 <img src={ChaveronIcon} alt="chaveron icon" />
             </span>
           </>
@@ -38,6 +39,9 @@ const Navigation = () => {
           </Routes>
           <Routes>
             <Route path="/elements" element={getNavElements(3)} />
+          </Routes>
+          <Routes>
+            <Route path="/result" element={getNavElements(4)} />
           </Routes>
         </div>
         <div className="logo-wrapper">

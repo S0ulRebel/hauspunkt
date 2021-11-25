@@ -1,10 +1,8 @@
 import React, { useContext, useEffect, useRef } from "react";
-import { Plane } from "@react-three/drei";
 import { useState } from "react";
 import { Vector3 } from "three";
-import { extend, ThreeEvent, useThree } from "@react-three/fiber";
+import { extend, useThree } from "@react-three/fiber";
 import { DragControls } from "three/examples/jsm/controls/DragControls";
-import { group } from "console";
 import { clamp } from "three/src/math/MathUtils";
 import { ConfigContext } from "../../context/config-context";
 extend({ DragControls });
@@ -23,17 +21,16 @@ const BathroomElementMesh = ({
   maxX,
 }: BathroomElementProps) => {
   const groupRef = useRef<any>();
-  const {room} = useContext(ConfigContext);
-  // const controlsRef = useRef();
+  const [configContext] = useContext(ConfigContext);
   const [controls, setControls] = useState<DragControls>();
-  const [children, setChildren] = useState([]);
+  const [children, setChildren] = useState<any>([]);
   const { camera, gl } = useThree();
   const [position, setPosition] = useState([...startPosition]);
   const [active, setActive] = useState<boolean>(false);
 
   useEffect(() => {
     if (groupRef.current) {
-      setChildren(groupRef.current.children);
+      setChildren([groupRef.current]);
     }
   }, [groupRef]);
   useEffect(() => {
@@ -43,14 +40,8 @@ const BathroomElementMesh = ({
   useEffect(() => {
     controls?.addEventListener("dragstart", () => setActive(true));
     controls?.addEventListener("drag", (e) => {
-      // const [x, y, z] = startPosition;
-      console.log(e, startPosition);
-      const width = dimensions[0];
-      const newX = clamp(e.object.position.x, minX, maxX);
-      e.object.position.x = newX;
-      e.object.position.y = e.object.parent.position.y;
-      e.object.position.z = e.object.parent.position.z;
-      const { x, y, z } = e.object.position;
+      const x = clamp(e.object.position.x, minX, maxX);
+      const [, y, z] = [...position];
       e.object.position.x = 0;
       e.object.position.y = 0;
       e.object.position.z = 0;

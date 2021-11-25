@@ -1,0 +1,31 @@
+.tooltip-wrapper {
+  position: relative;
+  z-index: 1;
+
+  * {
+    cursor: pointer;
+  }
+
+  .tooltip {
+    position: absolute;
+    display: none;
+    z-index: 1;
+    color: #f3f3f3;
+    font-family: WorkSansRegular;
+    font-size: 14px;
+    letter-spacing: 0;
+    line-height: 16px;
+    background-color: #971b1e;
+    box-shadow: 0 0 16px 0 rgba(12, 12, 13, 0.1);
+    padding: 12px;
+    width: 220px;
+  }
+
+  &:hover {
+    .tooltip {
+      display: block;
+      top: calc(100% + 20px);
+      left: calc(100% - 20px);
+    }
+  }
+}

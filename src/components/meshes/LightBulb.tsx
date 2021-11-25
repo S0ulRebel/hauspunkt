@@ -13,11 +13,11 @@ const LigthBulb = ({ position, intensity = 1, showBulb = false }: LightBulbProps
       <mesh position={position}>
         {showBulb && (
           <>
-            <sphereBufferGeometry args={[0.1]} />
+            <sphereBufferGeometry args={[10]} />
             <meshPhongMaterial emissive={new Color(255, 10, 10)} />
           </>
         )}
-        <pointLight castShadow intensity={intensity}/>
+        <pointLight castShadow intensity={intensity} decay={2}/>
       </mesh>
     </>
   );

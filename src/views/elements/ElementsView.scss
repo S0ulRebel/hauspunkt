@@ -3,19 +3,25 @@
     height: 100%;
     width: 100%;
     flex-direction: row;
+    position: relative;
 
     .controls-wrapper {
+        position: relative;
+        z-index: 1;
         width: 300px;
         margin-top: 28px;
         margin-left: 45px;
+        flex-shrink: 0;
 
         .control-group {
-            margin-bottom: 58px;
+            margin-bottom: 20px;
             display: flex;
+            .label-wrapper {
+                width: 129px;
+            }
             label {
                 color: #58595B;
                 font-size: 14px;
-                width: 129px;
             }
             .value-wrapper {
                 width: 171px;
@@ -25,9 +31,16 @@
                 }
             }
         }
+
+        .button {
+            margin-top: 37px;
+        }
     }
 
     .viewport-wrapper {
+        position: relative;
+        z-index: 0;
         flex-grow: 1;
+        margin-left: 50px;
     }
 }

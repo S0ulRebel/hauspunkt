@@ -13,7 +13,7 @@ import { elementsMinDistance, elementWidth } from "../../utils/constants";
 const RoomView = () => {
   const [configContext, setConfigContext] = useContext(ConfigContext);
   const { room, prewall, schacht } = configContext;
-  console.log(configContext);
+
   const {
     roomWidth,
     roomHeight,
@@ -34,6 +34,7 @@ const RoomView = () => {
   } = prewall;
 
   const roomlWidthHandler = (v: number) => {
+    console.log('roomlWidthHandler', v)
     setConfigContext({
       ...configContext,
       room: {
@@ -166,14 +167,14 @@ const RoomView = () => {
           max={roomWidth - prewallWidth / 2}
           handler={(v) => prewallRightHandler(v)}
         />
-        <button onClick={() => addBathroomElement('toilet')}>Add element</button>
+        {/* <button onClick={() => addBathroomElement('toilet')}>Add element</button> */}
       </div>
       <div className="viewport-wrapper">
-        <Canvas shadows style={{ background: "white" }}>
+        {/* <Canvas shadows style={{ background: "white" }}>
           <ConfigContext.Provider value={[configContext, setConfigContext]}>
             <Scene />
           </ConfigContext.Provider>
-        </Canvas>
+        </Canvas> */}
       </div>
     </div>
   );

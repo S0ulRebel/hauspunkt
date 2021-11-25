@@ -8,13 +8,10 @@ import LigthBulb from "./LightBulb";
 import { ConfigContext } from "../../context/config-context";
 
 const Scene = () => {
-  const [configContext, setConfigContext] = useContext(ConfigContext);
+  const [configContext] = useContext(ConfigContext);
   const { roomHeight, minRoomHeight, roomWidth, roomDepth } = configContext.room;
-  const { prewallWidth, prewallHeight, prewallLeft } = configContext.prewall;
 
-  const wallThickness = 0.05;
-
-  const { camera, controls } = useThree();
+  const { camera } = useThree();
 
   useThree(({ camera, size }) => {
     camera.position.set(roomWidth / 2, minRoomHeight * 0.6, roomDepth);

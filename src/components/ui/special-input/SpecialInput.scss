@@ -1,0 +1,75 @@
+.special-input {
+  border: 1px solid #979797;
+  border-radius: 2px;
+  display: inline-block;
+  padding: 5px 10px;
+  background-color: white;
+  position: relative;
+  top: 12px;
+
+  &.active {
+    position: absolute;
+    top: 0px;
+    z-index: 99;
+  }
+  
+  input,
+  input:focus {
+    border: none;
+    outline: none;
+  }
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  .wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 20px;
+    line-height: 20px;
+    font-size: 14px;
+    
+    .dropdown-toggle {
+      cursor: pointer;
+      flex-grow: 1;
+      text-align: right;
+      align-self: flex-end;
+      height: 20px;
+      width: 10px;
+    }
+  }
+
+  .options-wrapper {
+    border-top: 1px solid #D8D9D9;
+    margin-top: 5px;
+    width: max-content;
+
+    .option {
+      cursor: pointer;
+      height: 28px;
+      line-height: 28px;
+      font-size: 14px;
+
+      &:hover {
+        color: #D8272B;
+      }
+    }
+  }
+
+  input {
+    width: 30px;
+  }
+
+  .unit {
+    display: inline-block;
+    margin-right: 5px;
+  }
+}
