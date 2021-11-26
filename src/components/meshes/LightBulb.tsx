@@ -17,7 +17,7 @@ const LigthBulb = ({ position, intensity = 1, showBulb = false }: LightBulbProps
             <meshPhongMaterial emissive={new Color(255, 10, 10)} />
           </>
         )}
-        <pointLight castShadow intensity={intensity} decay={2}/>
+        <pointLight intensity={intensity} decay={1} power={10}/>
       </mesh>
     </>
   );

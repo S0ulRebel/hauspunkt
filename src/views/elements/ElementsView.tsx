@@ -4,7 +4,6 @@ import { useContext, useEffect, useState } from "react";
 import { useThree } from "react-three-fiber";
 import { Camera } from "three";
 import * as THREE from "three";
-import Scene from "../../components/meshes/Scene";
 import DimensionsInputGroup from "../../components/ui/dimensions-input-group/DimensionsInputGroup";
 import "./ElementsView.scss";
 import { ConfigContext } from "../../context/config-context";
@@ -26,7 +25,7 @@ const prewallHeightOptions: SpecialInputOption[] = [
 const ElementsView = () => {
   const navigate = useNavigate();
   const [configContext, setConfigContext] = useContext(ConfigContext);
-  const { room, prewall, schacht } = configContext;
+  const { room } = configContext;
 
   const {
     roomWidth,
@@ -38,97 +37,60 @@ const ElementsView = () => {
     floorThickness,
     minFloorThickness,
     maxFloorThickness,
-    roomDepth,
-  } = room;
-  const {
     prewallWidth,
     minPrewallWidth,
     minPrewallHeight,
     prewallHeight,
-    prewallThickness,
     prewallLeft,
+    maxPrewallLeft,
     prewallRight,
-  } = prewall;
+    maxPrewallRight,
+    isPrewallHeightAdjustable,
+  } = room;
 
-  const roomlWidthHandler = (v: number) => {
+  const updateRoomInContext = () => {
     setConfigContext({
       ...configContext,
-      room: {
-        ...room,
-        roomWidth: v,
-      },
+      room,
     });
-    // setRoomWidth(v);
-    // if (prewallWidth > v) setPrewallWidth(v);
+  };
+
+  const roomlWidthHandler = (v: number) => {
+    room.setRoomWidth(v);
+    updateRoomInContext();
   };
 
   const roomlHeightHandler = (v: number) => {
-    const newPrewallHeight = prewallHeight > v ? v : prewallHeight;
-    setConfigContext({
-      ...configContext,
-      room: {
-        ...room,
-        roomHeight: v,
-      },
-      prewall: {
-        ...prewall,
-        prewallHeight: newPrewallHeight,
-      },
-    });
+    room.setRoomHeight(v);
+    updateRoomInContext();
   };
 
   const roomlFloorThicknessHandler = (v: number) => {
-    setConfigContext({
-      ...configContext,
-      room: {
-        ...room,
-        floorThickness: v,
-      },
-    });
+    room.setFloorThickness(v);
+    updateRoomInContext();
   };
 
   const prewallWidthHandler = (v: number) => {
-    setConfigContext({
-      ...configContext,
-      prewall: {
-        ...prewall,
-        prewallWidth: v,
-      },
-    });
+    room.setPrewallWidth(v);
+    updateRoomInContext();
   };
 
   const prewallHeightHandler = (v: number) => {
-    setConfigContext({
-      ...configContext,
-      prewall: {
-        ...prewall,
-        prewallHeight: v,
-      },
-    });
+    room.setPrewallHeight(v);
+    updateRoomInContext();
   };
 
   const prewallLeftHandler = (v: number) => {
-    setConfigContext({
-      ...configContext,
-      prewall: {
-        ...prewall,
-        prewallLeft: v,
-      },
-    });
+    room.setPrewallLeft(v);
+    updateRoomInContext();
   };
 
   const prewallRightHandler = (v: number) => {
-    setConfigContext({
-      ...configContext,
-      prewall: {
-        ...prewall,
-        prewallRight: v,
-      },
-    });
+    room.setPrewallRight(v);
+    updateRoomInContext();
   };
 
-  const getStartXForNewElement = () => 
-      elementsMinDistance + elementWidth;
+  const getStartXForNewElement = () => elementsMinDistance + elementWidth;
 
   const addBathroomElement = (type: string) => {
     const newElement = new BathroomElement(
@@ -171,14 +133,16 @@ const ElementsView = () => {
         </Expandable>
 
         <Expandable title={"Vorwand bearbeiten"}>
-          <DimensionsInputGroup
-            label={"Prewall height:"}
-            value={prewallHeight}
-            min={minPrewallHeight}
-            max={roomHeight}
-            options={prewallHeightOptions}
-            handler={(v) => prewallHeightHandler(v)}
-          />
+          {isPrewallHeightAdjustable && (
+            <DimensionsInputGroup
+              label={"Prewall height:"}
+              value={prewallHeight}
+              min={minPrewallHeight}
+              max={roomHeight}
+              options={prewallHeightOptions}
+              handler={(v) => prewallHeightHandler(v)}
+            />
+          )}
           <DimensionsInputGroup
             label={"Prewall width:"}
             value={prewallWidth}
@@ -190,23 +154,25 @@ const ElementsView = () => {
             label={"Prewall left:"}
             value={prewallLeft}
             min={0}
-            max={roomWidth - prewallWidth / 2}
+            max={maxPrewallLeft}
             handler={(v) => prewallLeftHandler(v)}
           />
           <DimensionsInputGroup
             label={"Prewall right:"}
             value={prewallRight}
             min={0}
-            max={roomWidth - prewallWidth / 2}
+            max={maxPrewallRight}
             handler={(v) => prewallRightHandler(v)}
           />
         </Expandable>
-        
-        <Expandable title={'Elemente'}>
-          <button onClick={() => addBathroomElement('toilet')}>Add element</button>
+
+        <Expandable title={"Elemente"}>
+          <button onClick={() => addBathroomElement("toilet")}>
+            Add element
+          </button>
         </Expandable>
 
-        <Button text={'Bestätigen'} clickHandler={() => navigate("/result")}/>    
+        <Button text={"Bestätigen"} clickHandler={() => navigate("/result")} />
       </div>
 
       <div className="viewport-wrapper">

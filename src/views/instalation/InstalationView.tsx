@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/ui/button/Button";
 import InstalationTypePreview from "../../components/ui/instalation-type-preview/InstalationTypePreview";
+import { ConfigContext } from "../../context/config-context";
 import Room from "../../models/Room";
 import "./InstalationView.scss";
 import PrewallHeightModal from "./prewall-height-modal/PrewallHeightModal";
@@ -10,6 +11,7 @@ import PrewallHeightModal from "./prewall-height-modal/PrewallHeightModal";
 const InstalationView = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [configContext, setCofigContext] = useContext(ConfigContext);
   const [heightModalVisible, setHeightModalVisible] = useState(false);
 
   const openStandardHeightsModal = () => {
@@ -21,6 +23,10 @@ const InstalationView = () => {
   };
 
   const handleInstalationClick = (room: Room) => {
+    setCofigContext({
+      ...configContext,
+      room,
+    });
     if (room.hasFixedPrewallHeight()) navigate("/elements");
     else {
       openStandardHeightsModal();
@@ -29,6 +35,11 @@ const InstalationView = () => {
   const handleContactClick = () => alert("contact");
 
   const handlePrewallHeightSelection = (height: number) => {
+    if (configContext.room) {
+      const value = height ? height : 116;
+      if (height === 0) configContext.room.setPrewallHeightAdjustable(true);
+      configContext.room.setPrewallHeight(value);
+    }
     closeStandardHeightsModal();
     navigate("/elements");
   };
@@ -77,7 +88,7 @@ const InstalationView = () => {
   instalationTypes.push(
     new Room(
       t("instalationPage.instalationTypes.partitionWall"),
-      false,
+      true,
       false,
       false,
       true

@@ -3,6 +3,7 @@ import { useThree } from "@react-three/fiber";
 import React, { useContext, useEffect } from "react";
 import * as THREE from "three";
 import { Vector3 } from "three";
+import { mapLinear } from "three/src/math/MathUtils";
 import { ConfigContext } from "../../context/config-context";
 import BathroomElement from "../../models/BathroomElement";
 import { elementsMinDistance } from "../../utils/constants";
@@ -14,26 +15,37 @@ const Viewport = () => {
   const [configContext] = useContext(ConfigContext);
   const { room, prewall } = configContext;
   const {
+    hasRoomDivider,
+    hasPartitionWall,
     roomHeight,
     minRoomHeight,
     roomWidth,
     minRoomWidth,
+    maxRoomWidth,
     roomDepth,
     wallThickness,
+    prewallWidth,
+    prewallHeight,
+    prewallLeft,
+    prewallThickness,
+    prewallDistance,
+    hasSchacht,
+    schachtWidth,
+    schachtHeight,
+    schachtLeft,
+    schachtThickness,
   } = room;
-  const { prewallWidth, prewallLeft, prewallThickness } = prewall;
 
   const { camera } = useThree();
 
-  const roomPosition = new Vector3(roomWidth / 2, 0, roomDepth / 2);
+  const roomPosition = new Vector3(0, 0, 0);
 
   const updateCameraPosition = () => {
-    const z = roomWidth <= minRoomWidth ? roomWidth : roomWidth / 2;
-    camera.position.set(roomWidth / 2, -roomHeight / 4, z);
-    camera.lookAt(
-      new THREE.Vector3(roomWidth / 2, -minRoomHeight / 2, -roomDepth)
-    );
-    camera.updateProjectionMatrix();
+    const min = 0.4;
+    const max = (hasRoomDivider || hasPartitionWall) ? 0.7 : 0.6;
+    // map value of room width to min 0.4 max 0.6 or 0,7 if room has a divider or partition wall
+    const factor = mapLinear(roomWidth, minRoomWidth, maxRoomWidth, min, max)
+    camera.position.set(roomWidth / 2, minRoomHeight / 2, roomDepth * factor);
   };
 
   useThree(({ camera, size }) => {
@@ -44,91 +56,48 @@ const Viewport = () => {
     updateCameraPosition();
   }, [camera, roomDepth, roomHeight, roomWidth]);
 
-  const renferFloor = () => {
-    const width = roomWidth;
-    const height = wallThickness;
-    const depth = roomDepth;
-    const dimensions = [height, width, depth];
-    let { x, y, z } = roomPosition;
-    y -= roomHeight / 2 + wallThickness / 2;
-    const position = [x, y, z];
-    return <Wall position={position} dimensions={dimensions} />;
+  const renderWall = (
+    position: number[],
+    dimensions: number[],
+    color: string = "#dddddd"
+  ) => <Wall position={position} dimensions={dimensions} color={color}/>;
+
+  const renderHorizontalWall = (position: number[]) => {
+    const dimensions = [wallThickness, roomWidth, roomDepth];
+    return renderWall(position, dimensions);
   };
 
-  const renderCeiling = () => {
-    const width = roomWidth;
-    const height = wallThickness;
-    const depth = roomDepth;
-    const dimensions = [height, width, depth];
-    let { x, y, z } = roomPosition;
-    y += roomHeight / 2 + wallThickness / 2;
-    const position = [x, y, z];
-    return <Wall position={position} dimensions={dimensions} />;
+  const renderVerticalWall = (position: number[]) => {
+    const dimensions = [roomHeight, roomWidth, wallThickness];
+    return renderWall(position, dimensions);
   };
 
-  const renderBackWall = () => {
-    const width = roomWidth;
-    const height = roomHeight;
-    const depth = wallThickness;
-    const dimensions = [height, width, depth];
-    let { x, y, z } = roomPosition;
-    z -= roomDepth / 2;
-    const position = [x, y, z];
-    return <Wall position={position} dimensions={dimensions} />;
-  };
-
-  const renderLeftWall = () => {
-    const width = wallThickness;
-    const height = roomHeight;
-    const depth = roomDepth;
-    const dimensions = [height, width, depth];
-    let { x, y, z } = roomPosition;
-    x -= roomWidth / 2 + wallThickness / 2;
-    const position = [x, y, z];
-    return <Wall position={position} dimensions={dimensions} />;
-  };
-
-  const renderRightWall = () => {
-    const width = wallThickness;
-    const height = roomHeight;
-    const depth = roomDepth;
-    const dimensions = [height, width, depth];
-    let { x, y, z } = roomPosition;
-    x += roomWidth / 2 + wallThickness / 2;
-    const position = [x, y, z];
-    return <Wall position={position} dimensions={dimensions} />;
+  const renderSideWall = (position: number[]) => {
+    const dimensions = [roomHeight, wallThickness, roomDepth];
+    return renderWall(position, dimensions);
   };
 
   const renderPrewall = () => {
-    const {
-      prewallHeight: height,
-      prewallWidth: width,
-      prewallThickness: depth,
-    } = prewall;
-    const dimensions = [height, width, depth];
-    let { x, y, z } = roomPosition;
-    z -= roomDepth / 2 - prewallThickness / 2;
-    y = -roomHeight / 2 + prewall.prewallHeight / 2;
-    x += prewallLeft;
+    const dimensions = [prewallHeight, prewallWidth, prewallThickness];
+    const x = prewallLeft + prewallWidth / 2;
+    const y = prewallHeight / 2;
+    const z = prewallThickness / 2 + prewallDistance;
     const position = [x, y, z];
-    return (
-      <Wall position={position} dimensions={dimensions} color={"#aaaaaa"} />
-    );
+    return renderWall(position, dimensions, "#bbbbbb");
+  };
+
+  const renderSchacht = () => {
+    const dimensions = [schachtHeight, schachtWidth, schachtThickness];
+    const x = schachtLeft + schachtWidth / 2;
+    const y = roomHeight / 2;
+    const z = prewallThickness / 2;
+    const position = [x, y, z];
+    return renderWall(position, dimensions, "#bbbbbb");
   };
 
   const renderLighting = () => {
-    const lightPositions = [];
-
-    const numX = roomWidth / (minRoomWidth / 2);
-    for (let xIndex = 0; xIndex < numX; xIndex++) {
-      const division = numX > 2 ? minRoomWidth / 2 : minRoomWidth;
-      const x = division * xIndex;
-      lightPositions.push(new Vector3(x, 0, 0));
-      lightPositions.push(new Vector3(x, 0, roomDepth / 4));
-    }
-
-    const lightIntensity = numX > 3 ? 0.2 : 0.8;
-
+    const lightPositions = [new Vector3(roomWidth / 2, 120, roomDepth / 2)];
+    const lightIntensity = 1;
     return (
       <>
         {lightPositions.map((lightPosition) => (
@@ -151,16 +120,17 @@ const Viewport = () => {
   return (
     <>
       {/* <OrbitControls /> */}
-      {/* <axesHelper args={[100]} /> */}
-      {/* <gridHelper scale={new Vector3(100, 100, 100)} /> */}
+      <axesHelper args={[100]} />
+      <gridHelper scale={new Vector3(200, 200, 200)} />
       <ambientLight intensity={0.2} />
       {renderLighting()}
-      {renferFloor()}
-      {renderCeiling()}
-      {renderBackWall()}
-      {renderLeftWall()}
-      {renderRightWall()}
-      {/* {renderPrewall()} */}
+      {renderHorizontalWall([roomWidth / 2, 0, roomDepth / 2])}
+      {renderHorizontalWall([roomWidth / 2, roomHeight, roomDepth / 2])}
+      {renderVerticalWall([roomWidth / 2, roomHeight / 2, 0])}
+      {renderSideWall([0, roomHeight / 2, roomDepth / 2])}
+      {renderSideWall([roomWidth, roomHeight / 2, roomDepth / 2])}
+      {renderPrewall()}
+      {hasSchacht && renderSchacht()}
       {configContext.bathroomElements.map(
         (el: BathroomElement, index: number) => (
           <BathroomElementMesh

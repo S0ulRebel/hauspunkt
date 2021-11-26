@@ -9,15 +9,10 @@ interface ExpandableProps {
 const Expandable = ({ title, children }: ExpandableProps) => {
   const [expanded, setExpanded] = useState(false);
   return (
-    <div className={`expandable${expanded ? ' expanded' : ''}`}>
-      <div className="expandable__title-wrapper">
+    <div className={`expandable${expanded ? " expanded" : ""}`}>
+      <div className="expandable__title-wrapper" onClick={() => setExpanded(!expanded)}>
         <h3 className="expandable__title">{title}</h3>
-        <div
-          className="expandable__icon"
-          onClick={() => setExpanded(!expanded)}
-        >
-          {expanded ? "-" : "+"}
-        </div>
+        <div className="expandable__icon">{expanded ? "-" : "+"}</div>
       </div>
       {expanded && <>{children}</>}
     </div>
