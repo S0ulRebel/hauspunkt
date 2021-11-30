@@ -73,6 +73,7 @@ const BathroomElementMesh = ({
         {type === 'toilet' && <Model path="/models/toilet.gltf" scale={new Array(3).fill(2)} y={-dimensions[1] / 2 + 10} z={35} />}
         {type === 'urinal' && <Model path="/models/urinal.gltf" scale={new Array(3).fill(40)} y={-dimensions[1] / 2 + 30} z={8} /> }
         {type === 'sink' && <Model path="/models/sink.gltf" scale={new Array(3).fill(0.8)} y={-dimensions[1] / 2 + 60} z={20} rotation={{x: 0, y: -90, z: 0}}/>}
+        {type === 'bidet' && <Model path="/models/bidet2.gltf" scale={new Array(3).fill(80)} y={-dimensions[1] / 2 + 25} z={15} rotation={{x: 0, y: -90, z: 0}}/>}
       </Suspense>
     </group>
   );

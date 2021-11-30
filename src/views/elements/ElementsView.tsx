@@ -213,11 +213,28 @@ const ElementsView = () => {
         </Expandable>
 
         <Expandable title={"Elemente"}>
+          <div className="add-element-wrapper">
           <AddElementButton
             img={ToiletImage}
             label="Toilette"
             clickHandler={() => addBathroomElement("toilet")}
           />
+          <AddElementButton
+            img={ToiletImage}
+            label="Waschbecken"
+            clickHandler={() => addBathroomElement("sink")}
+          />
+          <AddElementButton
+            img={ToiletImage}
+            label="Pissoir"
+            clickHandler={() => addBathroomElement("urinal")}
+          />
+          <AddElementButton
+            img={ToiletImage}
+            label="Bidet"
+            clickHandler={() => addBathroomElement("bidet")}
+          />
+          </div>
         </Expandable>
 
         <Button text={"Bestätigen"} clickHandler={() => navigate("/result")} />

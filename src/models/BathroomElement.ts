@@ -1,4 +1,4 @@
-export type BathroomElementType = 'toilet' | 'urinal' | 'sink';
+export type BathroomElementType = 'toilet' | 'urinal' | 'sink' | 'bidet';
 
 export default class BathroomElement {
     type: BathroomElementType;
