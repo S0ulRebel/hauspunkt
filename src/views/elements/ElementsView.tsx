@@ -4,7 +4,7 @@ import { useContext } from "react";
 import DimensionsInputGroup from "../../components/ui/dimensions-input-group/DimensionsInputGroup";
 import "./ElementsView.scss";
 import { ConfigContext } from "../../context/config-context";
-import BathroomElement from "../../models/BathroomElement";
+import BathroomElement, { BathroomElementType } from "../../models/BathroomElement";
 import { elementsMinDistance, elementWidth } from "../../utils/constants";
 import Expandable from "../../components/ui/expandable/Expandable";
 import { SpecialInputOption } from "../../components/ui/special-input/SpecialInput";
@@ -12,6 +12,8 @@ import Button from "../../components/ui/button/Button";
 import { useNavigate } from "react-router-dom";
 import Viewport from "../../components/meshes/Viewport";
 import SideSelectButton from "./side-select-button/SideSelectButton";
+import AddElementButton from "./add-element-button/AddElementButton";
+import ToiletImage from './../../assets/images/toilet.png';
 
 const prewallHeightOptions: SpecialInputOption[] = [
   { label: "Standardhöhe 86 cm", value: 86 },
@@ -107,7 +109,7 @@ const ElementsView = () => {
 
   const getStartXForNewElement = () => elementsMinDistance + elementWidth;
 
-  const addBathroomElement = (type: string) => {
+  const addBathroomElement = (type: BathroomElementType) => {
     const newElement = new BathroomElement(
       type,
       elementWidth,
@@ -211,9 +213,11 @@ const ElementsView = () => {
         </Expandable>
 
         <Expandable title={"Elemente"}>
-          <button onClick={() => addBathroomElement("toilet")}>
-            Add element
-          </button>
+          <AddElementButton
+            img={ToiletImage}
+            label="Toilette"
+            clickHandler={() => addBathroomElement("toilet")}
+          />
         </Expandable>
 
         <Button text={"Bestätigen"} clickHandler={() => navigate("/result")} />

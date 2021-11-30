@@ -1,0 +1,15 @@
+.add-element-button {
+  cursor: pointer;
+  color: #58595b;
+  font-family: WorkSansRegular;
+  font-size: 14px;
+  width: 76px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &__label {
+      margin-top: 16px;
+  }
+}
