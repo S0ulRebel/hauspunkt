@@ -31,6 +31,7 @@ const BathroomElementMesh = ({
   const { camera, gl } = useThree();
   const [position, setPosition] = useState([...startPosition]);
   const [active, setActive] = useState<boolean>(false);
+  const [hover, setHover] = useState(false);
 
   useEffect(() => {
     if (groupRef.current) {
@@ -42,7 +43,7 @@ const BathroomElementMesh = ({
   }, [children]);
 
   useEffect(() => {
-    controls?.addEventListener("dragstart", () => setActive(true));
+    // controls?.addEventListener("dragstart", () => setActive(true));
     controls?.addEventListener("drag", (e) => {
       const x = clamp(e.object.position.x, minX, maxX);
       const [, y, z] = [...position];
@@ -51,29 +52,64 @@ const BathroomElementMesh = ({
       e.object.position.z = 0;
       setPosition([x, y, z]);
     });
-    controls?.addEventListener("dragend", (e) => {
-      setActive(false);
-    });
+    // controls?.addEventListener("dragend", (e) => {
+    //   setActive(false);
+    // });
   }, [controls]);
 
   return (
     <group ref={groupRef} position={new Vector3(...position)}>
-      <mesh>
+      <mesh
+        onPointerEnter={() => setHover(true)}
+        onPointerLeave={() => setHover(false)}
+        onPointerUp={() => setActive(true)}
+        onPointerMissed={() => setActive(false)}
+      >
         <planeBufferGeometry
           attach="geometry"
           args={[dimensions[0], dimensions[1]]}
         />
         <meshBasicMaterial
-          color={active ? "#BD1B1F" : "#BD1B1F"}
-          opacity={0.1}
+          color={"#BD1B1F"}
+          opacity={active ? 0.2 : hover ? 0.1 : 0}
           transparent={true}
         />
       </mesh>
-      <Suspense fallback={''}>
-        {type === 'toilet' && <Model path="/models/toilet.gltf" scale={new Array(3).fill(2)} y={-dimensions[1] / 2 + 10} z={35} />}
-        {type === 'urinal' && <Model path="/models/urinal.gltf" scale={new Array(3).fill(40)} y={-dimensions[1] / 2 + 30} z={8} /> }
-        {type === 'sink' && <Model path="/models/sink.gltf" scale={new Array(3).fill(0.8)} y={-dimensions[1] / 2 + 60} z={20} rotation={{x: 0, y: -90, z: 0}}/>}
-        {type === 'bidet' && <Model path="/models/bidet2.gltf" scale={new Array(3).fill(80)} y={-dimensions[1] / 2 + 25} z={15} rotation={{x: 0, y: -90, z: 0}}/>}
+      <Suspense fallback={""}>
+        {type === "toilet" && (
+          <Model
+            path="/models/toilet.gltf"
+            scale={new Array(3).fill(2)}
+            y={-dimensions[1] / 2 + 10}
+            z={35}
+          />
+        )}
+        {type === "urinal" && (
+          <Model
+            path="/models/urinal.gltf"
+            scale={new Array(3).fill(40)}
+            y={-dimensions[1] / 2 + 30}
+            z={8}
+          />
+        )}
+        {type === "sink" && (
+          <Model
+            path="/models/sink.gltf"
+            scale={new Array(3).fill(0.8)}
+            y={-dimensions[1] / 2 + 60}
+            z={20}
+            rotation={{ x: 0, y: -90, z: 0 }}
+          />
+        )}
+        {type === "bidet" && (
+          <Model
+            path="/models/bidet2.gltf"
+            scale={new Array(3).fill(80)}
+            y={-dimensions[1] / 2 + 25}
+            z={15}
+            rotation={{ x: 0, y: -90, z: 0 }}
+          />
+        )}
       </Suspense>
     </group>
   );
