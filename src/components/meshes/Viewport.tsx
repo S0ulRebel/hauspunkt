@@ -38,8 +38,6 @@ const Viewport = () => {
 
   const { camera } = useThree();
 
-  const roomPosition = new Vector3(0, 0, 0);
-
   const updateCameraPosition = () => {
     const min = 0.4;
     const max = (hasRoomDivider || hasPartitionWall) ? 0.7 : 0.6;
@@ -83,11 +81,12 @@ const Viewport = () => {
     const y = prewallHeight / 2;
     const z = prewallThickness / 2 + prewallDistance;
     const position = [x, y, z];
+    console.log('renderPrewall, x', prewallLeft, x);
     return renderWall(position, dimensions, "#bbbbbb");
   };
 
   const renderSchacht = () => {
-    const dimensions = [schachtHeight, schachtWidth, schachtThickness];
+    const dimensions = [roomHeight, schachtWidth, schachtThickness];
     const x = schachtLeft + schachtWidth / 2;
     const y = roomHeight / 2;
     const z = prewallThickness / 2;
@@ -114,7 +113,7 @@ const Viewport = () => {
   const getMinXForElement = (el: BathroomElement) =>
     elementsMinDistance + el.width / 2;
 
-  const getMaxnXForElement = (el: BathroomElement) =>
+  const getMaxXForElement = (el: BathroomElement) =>
     prewallLeft + prewallWidth - el.width / 2 - elementsMinDistance;
 
   return (
@@ -135,14 +134,15 @@ const Viewport = () => {
         (el: BathroomElement, index: number) => (
           <BathroomElementMesh
             key={index}
+            type={el.type}
             startPosition={[
               el.x,
-              -(roomHeight / 2 - prewall.prewallHeight / 2),
+              prewallHeight / 2,
               prewallThickness + 0.1,
             ]}
-            dimensions={[el.width, prewall.prewallHeight]}
+            dimensions={[el.width, prewallHeight]}
             minX={getMinXForElement(el)}
-            maxX={getMaxnXForElement(el)}
+            maxX={getMaxXForElement(el)}
           />
         )
       )}

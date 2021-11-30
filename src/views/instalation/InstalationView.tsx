@@ -5,6 +5,7 @@ import Button from "../../components/ui/button/Button";
 import InstalationTypePreview from "../../components/ui/instalation-type-preview/InstalationTypePreview";
 import { ConfigContext } from "../../context/config-context";
 import Room from "../../models/Room";
+import { RoomWithSchacht } from "../../models/RoomWithSchacht";
 import "./InstalationView.scss";
 import PrewallHeightModal from "./prewall-height-modal/PrewallHeightModal";
 
@@ -66,12 +67,8 @@ const InstalationView = () => {
   );
 
   instalationTypes.push(
-    new Room(
-      t("instalationPage.instalationTypes.halfHeightPrewallWithSchacht"),
-      false,
-      true,
-      false,
-      false
+    new RoomWithSchacht(
+      t("instalationPage.instalationTypes.halfHeightPrewallWithSchacht")
     )
   );
 

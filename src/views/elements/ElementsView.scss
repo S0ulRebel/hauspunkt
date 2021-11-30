@@ -32,6 +32,13 @@
             }
         }
 
+        .schacht-side-wrapper {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+            margin-bottom: 50px;
+        }
+
         .button {
             margin-top: 37px;
         }

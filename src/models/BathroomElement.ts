@@ -1,9 +1,11 @@
+export type BathroomElementType = 'toilet' | 'urinal' | 'sink';
+
 export default class BathroomElement {
-    type: string;
+    type: BathroomElementType;
     width: number;
     x: number;
 
-    constructor(t: string, w: number, x: number) {
+    constructor(t: BathroomElementType, w: number, x: number) {
         this.type = t;
         this.width = w;
         this.x = x;

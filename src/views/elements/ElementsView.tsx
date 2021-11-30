@@ -1,9 +1,6 @@
 import React from "react";
-import { Canvas, context } from "@react-three/fiber";
-import { useContext, useEffect, useState } from "react";
-import { useThree } from "react-three-fiber";
-import { Camera } from "three";
-import * as THREE from "three";
+import { Canvas } from "@react-three/fiber";
+import { useContext } from "react";
 import DimensionsInputGroup from "../../components/ui/dimensions-input-group/DimensionsInputGroup";
 import "./ElementsView.scss";
 import { ConfigContext } from "../../context/config-context";
@@ -14,6 +11,7 @@ import { SpecialInputOption } from "../../components/ui/special-input/SpecialInp
 import Button from "../../components/ui/button/Button";
 import { useNavigate } from "react-router-dom";
 import Viewport from "../../components/meshes/Viewport";
+import SideSelectButton from "./side-select-button/SideSelectButton";
 
 const prewallHeightOptions: SpecialInputOption[] = [
   { label: "Standardhöhe 86 cm", value: 86 },
@@ -39,6 +37,7 @@ const ElementsView = () => {
     maxFloorThickness,
     prewallWidth,
     minPrewallWidth,
+    maxPrewallWidth,
     minPrewallHeight,
     prewallHeight,
     prewallLeft,
@@ -46,6 +45,12 @@ const ElementsView = () => {
     prewallRight,
     maxPrewallRight,
     isPrewallHeightAdjustable,
+    isPrewallPositionAdjustable,
+    hasSchacht,
+    schachtSide,
+    schachtWidth,
+    minSchachtWidth,
+    maxSchachtWidth,
   } = room;
 
   const updateRoomInContext = () => {
@@ -67,6 +72,16 @@ const ElementsView = () => {
 
   const roomlFloorThicknessHandler = (v: number) => {
     room.setFloorThickness(v);
+    updateRoomInContext();
+  };
+
+  const schachtSideSelectionHandler = (v: "left" | "right") => {
+    room.setSchachtSide(v);
+    updateRoomInContext();
+  };
+
+  const schachtWidthHandler = (v: number) => {
+    room.setSchachtWidth(v);
     updateRoomInContext();
   };
 
@@ -131,6 +146,31 @@ const ElementsView = () => {
             handler={(v) => roomlFloorThicknessHandler(v)}
           />
         </Expandable>
+        {hasSchacht && (
+          <Expandable title={"Schacht"}>
+            <div className="schacht-side-wrapper">
+              <SideSelectButton
+                title="links"
+                side="left"
+                active={schachtSide === "left"}
+                clickHandler={() => schachtSideSelectionHandler("left")}
+              />
+              <SideSelectButton
+                title="rechts"
+                side="right"
+                active={schachtSide === "right"}
+                clickHandler={() => schachtSideSelectionHandler("right")}
+              />
+            </div>
+            <DimensionsInputGroup
+              label={"Schacht width:"}
+              value={schachtWidth}
+              min={minSchachtWidth}
+              max={maxSchachtWidth}
+              handler={(v) => schachtWidthHandler(v)}
+            />
+          </Expandable>
+        )}
 
         <Expandable title={"Vorwand bearbeiten"}>
           {isPrewallHeightAdjustable && (
@@ -147,23 +187,27 @@ const ElementsView = () => {
             label={"Prewall width:"}
             value={prewallWidth}
             min={minPrewallWidth}
-            max={roomWidth}
+            max={maxPrewallWidth}
             handler={(v) => prewallWidthHandler(v)}
           />
-          <DimensionsInputGroup
-            label={"Prewall left:"}
-            value={prewallLeft}
-            min={0}
-            max={maxPrewallLeft}
-            handler={(v) => prewallLeftHandler(v)}
-          />
-          <DimensionsInputGroup
-            label={"Prewall right:"}
-            value={prewallRight}
-            min={0}
-            max={maxPrewallRight}
-            handler={(v) => prewallRightHandler(v)}
-          />
+          {isPrewallPositionAdjustable && (
+            <>
+              <DimensionsInputGroup
+                label={"Prewall left:"}
+                value={prewallLeft}
+                min={0}
+                max={maxPrewallLeft}
+                handler={(v) => prewallLeftHandler(v)}
+              />
+              <DimensionsInputGroup
+                label={"Prewall right:"}
+                value={prewallRight}
+                min={0}
+                max={maxPrewallRight}
+                handler={(v) => prewallRightHandler(v)}
+              />
+            </>
+          )}
         </Expandable>
 
         <Expandable title={"Elemente"}>

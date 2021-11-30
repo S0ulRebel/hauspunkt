@@ -1,13 +1,16 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { Suspense, useContext, useEffect, useRef } from "react";
 import { useState } from "react";
 import { Vector3 } from "three";
 import { extend, useThree } from "@react-three/fiber";
 import { DragControls } from "three/examples/jsm/controls/DragControls";
 import { clamp } from "three/src/math/MathUtils";
 import { ConfigContext } from "../../context/config-context";
+import Model from "./Model";
+import { BathroomElementType } from "../../models/BathroomElement";
 extend({ DragControls });
 
 interface BathroomElementProps {
+  type: BathroomElementType;
   startPosition: number[];
   dimensions: any[];
   minX: number;
@@ -15,6 +18,7 @@ interface BathroomElementProps {
 }
 
 const BathroomElementMesh = ({
+  type,
   startPosition,
   dimensions,
   minX,
@@ -59,8 +63,17 @@ const BathroomElementMesh = ({
           attach="geometry"
           args={[dimensions[0], dimensions[1]]}
         />
-        <meshBasicMaterial color={active ? "green" : "red"} />
+        <meshBasicMaterial
+          color={active ? "#BD1B1F" : "#BD1B1F"}
+          opacity={0.1}
+          transparent={true}
+        />
       </mesh>
+      <Suspense fallback={''}>
+        {type === 'toilet' && <Model path="/models/toilet.gltf" scale={new Array(3).fill(2)} y={-dimensions[1] / 2 + 10} z={35} />}
+        {type === 'urinal' && <Model path="/models/urinal.gltf" scale={new Array(3).fill(40)} y={-dimensions[1] / 2 + 30} z={8} /> }
+        {type === 'sink' && <Model path="/models/sink.gltf" scale={new Array(3).fill(0.8)} y={-dimensions[1] / 2 + 60} z={20} rotation={{x: 0, y: -90, z: 0}}/>}
+      </Suspense>
     </group>
   );
 };
