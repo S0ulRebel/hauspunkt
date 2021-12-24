@@ -1,13 +1,22 @@
 .add-element-button {
+  &:hover {
+    border: 1px solid #BD1B1F;
+  }
+  box-sizing: border-box;
   cursor: pointer;
   color: #58595b;
   font-family: WorkSansRegular;
   font-size: 14px;
-  width: 76px;
+  width: 92px;
+  overflow: hidden;
 
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  img {
+    width: 92px;
+  }
 
   &__label {
       margin-top: 16px;

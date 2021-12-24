@@ -1,19 +1,21 @@
 import { OrbitControls } from "@react-three/drei";
-import { useThree } from "@react-three/fiber";
-import React, { useContext, useEffect } from "react";
+import { useLoader, useThree } from "@react-three/fiber";
+import React, { useCallback, useContext, useEffect, useState } from "react";
+import { start } from "repl";
 import * as THREE from "three";
 import { Vector3 } from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { mapLinear } from "three/src/math/MathUtils";
 import { ConfigContext } from "../../context/config-context";
 import BathroomElement from "../../models/BathroomElement";
-import { elementsMinDistance } from "../../utils/constants";
 import BathroomElementMesh from "./BathroomElementMesh";
 import LigthBulb from "./LightBulb";
 import Wall from "./Wall";
 
 const Viewport = () => {
-  const [configContext] = useContext(ConfigContext);
-  const { room, prewall } = configContext;
+  const [configContext, setConfigContext] = useContext(ConfigContext);
+  const [activeElelmentId, setActiveElementId] = useState<string>("");
+  const { room } = configContext;
   const {
     hasRoomDivider,
     hasPartitionWall,
@@ -39,12 +41,27 @@ const Viewport = () => {
   const { camera } = useThree();
 
   const updateCameraPosition = () => {
-    const min = 0.4;
-    const max = (hasRoomDivider || hasPartitionWall) ? 0.7 : 0.6;
-    // map value of room width to min 0.4 max 0.6 or 0,7 if room has a divider or partition wall
-    const factor = mapLinear(roomWidth, minRoomWidth, maxRoomWidth, min, max)
+    const min = 0.3;
+    const max = hasRoomDivider || hasPartitionWall ? 0.7 : 0.6;
+    // map value of room width to min 0.4 max 0.6 or 0.7 if room has a divider or partition wall
+    const factor = mapLinear(roomWidth, minRoomWidth, maxRoomWidth, min, max);
     camera.position.set(roomWidth / 2, minRoomHeight / 2, roomDepth * factor);
   };
+
+  const deleteActiveBathroomElement = () => {
+    room.deleteBathroomElement(activeElelmentId);
+    updateRoomInContext();
+  };
+
+  const onDocumentKeyDown = ({ key }: KeyboardEvent) => {
+    if (key === "Delete") {
+      deleteActiveBathroomElement();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("keydown", onDocumentKeyDown, false);
+  }, [onDocumentKeyDown]);
 
   useThree(({ camera, size }) => {
     updateCameraPosition();
@@ -58,7 +75,7 @@ const Viewport = () => {
     position: number[],
     dimensions: number[],
     color: string = "#dddddd"
-  ) => <Wall position={position} dimensions={dimensions} color={color}/>;
+  ) => <Wall position={position} dimensions={dimensions} color={color} />;
 
   const renderHorizontalWall = (position: number[]) => {
     const dimensions = [wallThickness, roomWidth, roomDepth];
@@ -81,7 +98,6 @@ const Viewport = () => {
     const y = prewallHeight / 2;
     const z = prewallThickness / 2 + prewallDistance;
     const position = [x, y, z];
-    console.log('renderPrewall, x', prewallLeft, x);
     return renderWall(position, dimensions, "#bbbbbb");
   };
 
@@ -110,11 +126,53 @@ const Viewport = () => {
     );
   };
 
-  const getMinXForElement = (el: BathroomElement) =>
-    elementsMinDistance + el.width / 2;
+  const getDimensionLinesForElementIndex = (index: number) => {
+    const { bathroomElements: elements } = configContext;
+    const lineY = -140;
+    const element = elements[index];
+    const elementDimensionLine = {
+      start: [-element.width / 2, lineY],
+      end: [element.width / 2, lineY],
+    };
 
-  const getMaxXForElement = (el: BathroomElement) =>
-    prewallLeft + prewallWidth - el.width / 2 - elementsMinDistance;
+    const previousElement = index > 0 ? elements[index - 1] : null;
+    const left = previousElement
+      ? element.x - (previousElement.x + element.width)
+      : element.x;
+    const leftDimensionLine = {
+      start: [-element.width / 2 - left, lineY],
+      end: [-element.width / 2, lineY],
+      labelOffset: 10,
+    };
+
+    const nextElement = index < elements.length ? elements[index + 1] : null;
+    const right = nextElement ? nextElement.x : prewallLeft + prewallWidth;
+    const rightDimensionLine = {
+      start: [element.width / 2, lineY],
+      end: [right - element.x - element.width / 2, lineY],
+      labelOffset: -10,
+    };
+
+    return [leftDimensionLine, rightDimensionLine];
+  };
+
+  const updateRoomInContext = () => {
+    setConfigContext({
+      ...configContext,
+      ...JSON.parse(JSON.stringify(room)),
+    });
+  };
+
+  const elementDragHandler = (id: string, value: number) => {
+    const element = room.bathroomElements.find(
+      (el: BathroomElement) => el.id === id
+    );
+    if (element) {
+      element.setX(value);
+      room.calculateMinMaxXForAllElements();
+      updateRoomInContext();
+    }
+  };
 
   return (
     <>
@@ -133,16 +191,22 @@ const Viewport = () => {
       {configContext.bathroomElements.map(
         (el: BathroomElement, index: number) => (
           <BathroomElementMesh
-            key={index}
+            key={el.id}
+            id={el.id}
             type={el.type}
             startPosition={[
-              el.x,
+              el.x + el.width / 2,
               prewallHeight / 2,
-              prewallThickness + 0.1,
+              prewallDistance + prewallThickness + 0.1,
             ]}
             dimensions={[el.width, prewallHeight]}
-            minX={getMinXForElement(el)}
-            maxX={getMaxXForElement(el)}
+            dimensionLines={getDimensionLinesForElementIndex(index)}
+            active={activeElelmentId === el.id}
+            dragHandler={(value: number) => elementDragHandler(el.id, value)}
+            clickHandler={(id: string) => {
+              setActiveElementId(id);
+            }}
+            deleteHandler={() => deleteActiveBathroomElement()}
           />
         )
       )}

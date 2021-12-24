@@ -1,2 +1,2 @@
-export const elementsMinDistance = 17;
-export const elementWidth = 50;
+export const elementsMinDistance = 18;
+export const elementWidth = 75;

@@ -1,5 +1,9 @@
 import { clamp } from "three/src/math/MathUtils";
-import BathroomElement from "./BathroomElement";
+import BathroomElement, {
+  BathroomElementType,
+  elementsMinDistance,
+  elementWidth,
+} from "./BathroomElement";
 
 class Room {
   // Room parameters
@@ -140,6 +144,61 @@ class Room {
 
   setPrewallDistance(distance: number) {
     this.prewallDistance = distance;
+  }
+
+  getStartXForNewElement() {
+    return 0;
+  }
+
+  sortBathroomElementsByX() {
+    this.bathroomElements = this.bathroomElements.sort((a, b) => a.x - b.x);
+  }
+
+  getMinMaxXForElementIndex(index: number) {
+    const { length } = this.bathroomElements;
+    const minX =
+      index === 0
+        ? elementsMinDistance
+        : this.bathroomElements[index - 1].x +
+          elementWidth +
+          elementsMinDistance;
+
+    const maxX =
+      index === length - 1
+        ? this.roomWidth - elementWidth - elementsMinDistance
+        : this.bathroomElements[index + 1].x -
+          elementWidth -
+          elementsMinDistance;
+
+    return [minX, maxX];
+  }
+
+  calculateMinMaxXForAllElements() {
+    this.bathroomElements.forEach((el: BathroomElement, index) => {
+      const currentElement = this.bathroomElements[index];
+      const [minX, maxX] = this.getMinMaxXForElementIndex(index);
+      currentElement.setMinX(minX);
+      currentElement.setMaxX(maxX);
+    });
+  }
+
+  addBathroomElement(type: BathroomElementType) {
+    const newElement = new BathroomElement(type, 0, 0, 0);
+    this.bathroomElements.push(newElement);
+    const { length } = this.bathroomElements;
+    const [minX, maxX] = this.getMinMaxXForElementIndex(length - 1);
+    newElement.setMinX(minX);
+    newElement.setMaxX(maxX);
+    newElement.setX(minX);
+    if(newElement.x > maxX) this.bathroomElements.pop();
+    this.sortBathroomElementsByX();
+    this.calculateMinMaxXForAllElements();
+  }
+
+  deleteBathroomElement(id: string) {
+    const result = this.bathroomElements.filter(e => e.id !== id);
+    this.bathroomElements = [...result];
+    this.calculateMinMaxXForAllElements();
   }
 
   isRoomDivided() {

@@ -4,7 +4,9 @@ import { useContext } from "react";
 import DimensionsInputGroup from "../../components/ui/dimensions-input-group/DimensionsInputGroup";
 import "./ElementsView.scss";
 import { ConfigContext } from "../../context/config-context";
-import BathroomElement, { BathroomElementType } from "../../models/BathroomElement";
+import BathroomElement, {
+  BathroomElementType,
+} from "../../models/BathroomElement";
 import { elementsMinDistance, elementWidth } from "../../utils/constants";
 import Expandable from "../../components/ui/expandable/Expandable";
 import { SpecialInputOption } from "../../components/ui/special-input/SpecialInput";
@@ -13,7 +15,10 @@ import { useNavigate } from "react-router-dom";
 import Viewport from "../../components/meshes/Viewport";
 import SideSelectButton from "./side-select-button/SideSelectButton";
 import AddElementButton from "./add-element-button/AddElementButton";
-import ToiletImage from './../../assets/images/toilet.png';
+import ToiletImage from "./../../assets/images/toilet.png";
+import SinkImage from "./../../assets/images/sink.png";
+import BidetImage from "./../../assets/images/bidet.png";
+import UrinalImage from "./../../assets/images/urinal.png";
 
 const prewallHeightOptions: SpecialInputOption[] = [
   { label: "Standardhöhe 86 cm", value: 86 },
@@ -107,17 +112,11 @@ const ElementsView = () => {
     updateRoomInContext();
   };
 
-  const getStartXForNewElement = () => elementsMinDistance + elementWidth;
-
   const addBathroomElement = (type: BathroomElementType) => {
-    const newElement = new BathroomElement(
-      type,
-      elementWidth,
-      getStartXForNewElement()
-    );
+    room.addBathroomElement(type);
     setConfigContext({
       ...configContext,
-      bathroomElements: [...configContext.bathroomElements, newElement],
+      ...JSON.parse(JSON.stringify(room)),
     });
   };
 
@@ -214,26 +213,26 @@ const ElementsView = () => {
 
         <Expandable title={"Elemente"}>
           <div className="add-element-wrapper">
-          <AddElementButton
-            img={ToiletImage}
-            label="Toilette"
-            clickHandler={() => addBathroomElement("toilet")}
-          />
-          <AddElementButton
-            img={ToiletImage}
-            label="Waschbecken"
-            clickHandler={() => addBathroomElement("sink")}
-          />
-          <AddElementButton
-            img={ToiletImage}
-            label="Pissoir"
-            clickHandler={() => addBathroomElement("urinal")}
-          />
-          <AddElementButton
-            img={ToiletImage}
-            label="Bidet"
-            clickHandler={() => addBathroomElement("bidet")}
-          />
+            <AddElementButton
+              img={ToiletImage}
+              label="Toilette"
+              clickHandler={() => addBathroomElement("toilet")}
+            />
+            <AddElementButton
+              img={SinkImage}
+              label="Waschbecken"
+              clickHandler={() => addBathroomElement("sink")}
+            />
+            <AddElementButton
+              img={UrinalImage}
+              label="Pissoir"
+              clickHandler={() => addBathroomElement("urinal")}
+            />
+            <AddElementButton
+              img={BidetImage}
+              label="Bidet"
+              clickHandler={() => addBathroomElement("bidet")}
+            />
           </div>
         </Expandable>
 

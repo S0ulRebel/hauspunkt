@@ -8,6 +8,7 @@ interface DimensionLineProps {
   end: number[];
   color: string;
   orientation?: "horizontal" | "vertical";
+  labelOffset?: number;
   changeHandler?: () => any | void;
 }
 
@@ -16,10 +17,11 @@ const DimensionLine = ({
   end,
   color,
   orientation = "horizontal",
+  labelOffset = 0,
   changeHandler = () => null,
 }: DimensionLineProps) => {
   const htmlRef = useRef<any>();
-  const arrowLength = 0.05;
+  const arrowLength = 5;
   const lineWidth = 0.5;
 
   const createDistanceLabel = (a: number[], b: number[]) => {
@@ -29,10 +31,10 @@ const DimensionLine = ({
     const position = v1.add(v2.sub(v1).divideScalar(2));
     const bgPosition = new Vector3()
       .copy(position)
-      .add(new Vector3(0, 0, 0.01));
+      .add(new Vector3(labelOffset, 0, 41));
     const textPosition = new Vector3()
       .copy(position)
-      .add(new Vector3(0, 0, 0.02));
+      .add(new Vector3(labelOffset, 0, 42));
 
     return (
       <>
@@ -40,19 +42,23 @@ const DimensionLine = ({
           castShadow={false}
           receiveShadow={false}
           position={bgPosition}
-          args={[0.4, 0.15]}
+          args={[40, 15]}
           material={
             new MeshBasicMaterial({ color: "#ffffff", toneMapped: false })
           }
-          onClick={() => (htmlRef.current.style.visibility = "visible")}
+          onClick={(e:MouseEvent) => {
+            e.stopPropagation();
+            htmlRef.current.style.visibility = "visible"
+          }}
         />
         <Text
+          scale={100}
           position={textPosition}
           color="#332C2B"
           anchorX="center"
           anchorY="middle"
         >
-          {Math.ceil(distance * 100) + " cm"}
+          {Math.ceil(distance) + " cm"}
         </Text>
         <Html
           as="div"

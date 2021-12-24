@@ -3,26 +3,42 @@ import { useState } from "react";
 import { Vector3 } from "three";
 import { extend, useThree } from "@react-three/fiber";
 import { DragControls } from "three/examples/jsm/controls/DragControls";
-import { clamp } from "three/src/math/MathUtils";
 import { ConfigContext } from "../../context/config-context";
-import Model from "./Model";
 import { BathroomElementType } from "../../models/BathroomElement";
+import Toilet from "./Toilet";
+import Sink from "./Sink";
+import Urinal from "./Urinal";
+import Bidet from "./Bidet";
+import DimensionLine from "./DimensionLine";
+import DeleteButton from "./DeleteButton";
 extend({ DragControls });
 
 interface BathroomElementProps {
+  id: string;
   type: BathroomElementType;
   startPosition: number[];
   dimensions: any[];
-  minX: number;
-  maxX: number;
+  dimensionLines: {
+    start: number[];
+    end: number[];
+    labelOffset: number;
+  }[];
+  active: boolean;
+  dragHandler: (value: number) => void;
+  clickHandler: (id: string) => void;
+  deleteHandler: () => void;
 }
 
 const BathroomElementMesh = ({
+  id,
   type,
   startPosition,
   dimensions,
-  minX,
-  maxX,
+  dimensionLines,
+  active,
+  dragHandler,
+  clickHandler,
+  deleteHandler,
 }: BathroomElementProps) => {
   const groupRef = useRef<any>();
   const [configContext] = useContext(ConfigContext);
@@ -30,7 +46,7 @@ const BathroomElementMesh = ({
   const [children, setChildren] = useState<any>([]);
   const { camera, gl } = useThree();
   const [position, setPosition] = useState([...startPosition]);
-  const [active, setActive] = useState<boolean>(false);
+  // const [active, setActive] = useState<boolean>(false);
   const [hover, setHover] = useState(false);
 
   useEffect(() => {
@@ -43,27 +59,34 @@ const BathroomElementMesh = ({
   }, [children]);
 
   useEffect(() => {
-    // controls?.addEventListener("dragstart", () => setActive(true));
     controls?.addEventListener("drag", (e) => {
-      const x = clamp(e.object.position.x, minX, maxX);
-      const [, y, z] = [...position];
+      const width = dimensions[0];
+      const newX = startPosition[0] + e.object.position.x;
       e.object.position.x = 0;
       e.object.position.y = 0;
       e.object.position.z = 0;
-      setPosition([x, y, z]);
+      dragHandler(newX - width / 2);
     });
-    // controls?.addEventListener("dragend", (e) => {
-    //   setActive(false);
-    // });
   }, [controls]);
 
   return (
-    <group ref={groupRef} position={new Vector3(...position)}>
+    <group ref={groupRef} position={new Vector3(...startPosition)}>
+      {active &&
+        dimensionLines.map((line, index) => (
+          <DimensionLine
+            key={index}
+            start={[...line.start, 0]}
+            end={[...line.end, 0]}
+            orientation="horizontal"
+            labelOffset={line.labelOffset}
+            color="#BD1B1F"
+          />
+        ))}
       <mesh
         onPointerEnter={() => setHover(true)}
         onPointerLeave={() => setHover(false)}
-        onPointerUp={() => setActive(true)}
-        onPointerMissed={() => setActive(false)}
+        onPointerDown={() => clickHandler(id)}
+        onPointerMissed={() => clickHandler("")}
       >
         <planeBufferGeometry
           attach="geometry"
@@ -74,40 +97,33 @@ const BathroomElementMesh = ({
           opacity={active ? 0.2 : hover ? 0.1 : 0}
           transparent={true}
         />
+        {active && <DeleteButton clickHandler={() => deleteHandler()} />}
       </mesh>
       <Suspense fallback={""}>
         {type === "toilet" && (
-          <Model
-            path="/models/toilet.gltf"
-            scale={new Array(3).fill(2)}
-            y={-dimensions[1] / 2 + 10}
-            z={35}
-          />
-        )}
-        {type === "urinal" && (
-          <Model
-            path="/models/urinal.gltf"
-            scale={new Array(3).fill(40)}
-            y={-dimensions[1] / 2 + 30}
-            z={8}
+          <Toilet
+            scale={new Vector3(...new Array(3).fill(80))}
+            position={new Vector3(0, -dimensions[1] / 2 + 40, 15)}
           />
         )}
         {type === "sink" && (
-          <Model
-            path="/models/sink.gltf"
-            scale={new Array(3).fill(0.8)}
-            y={-dimensions[1] / 2 + 60}
-            z={20}
-            rotation={{ x: 0, y: -90, z: 0 }}
+          <Sink
+            scale={new Vector3(...new Array(3).fill(50))}
+            position={new Vector3(0, -dimensions[1] / 2 + 70, 10)}
+          />
+        )}
+        {type === "urinal" && (
+          <Urinal
+            scale={new Vector3(...new Array(3).fill(70))}
+            position={new Vector3(0, -dimensions[1] / 2 + 50, 10)}
           />
         )}
         {type === "bidet" && (
-          <Model
-            path="/models/bidet2.gltf"
-            scale={new Array(3).fill(80)}
-            y={-dimensions[1] / 2 + 25}
-            z={15}
-            rotation={{ x: 0, y: -90, z: 0 }}
+          <Bidet
+            scale={new Vector3(...new Array(3).fill(80))}
+            position={
+              new Vector3(-dimensions[0] / 4, -dimensions[1] / 2 + 5, 35)
+            }
           />
         )}
       </Suspense>
