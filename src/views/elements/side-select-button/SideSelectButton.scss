@@ -1,21 +1,39 @@
 .side-select-button {
-    color: #A4A5A7;
-    cursor: pointer;
-    font-family: WorkSansRegular;
-    font-size: 14px;
-    letter-spacing: 0;
-    box-sizing: border-box;
-    height: 24px;
-    width: 88px;
-    border: 1px solid #A4A5A7;
-    border-radius: 2px;
-    background-color: #F3F3F3;
-    text-align: center;
-    line-height: 24px;
+  color: #a4a5a7;
+  cursor: pointer;
+  font-family: WorkSansRegular;
+  font-size: 14px;
+  letter-spacing: 0;
+  box-sizing: border-box;
+  height: 24px;
+  width: 88px;
+  border: 1px solid #a4a5a7;
+  border-radius: 2px;
+  background-color: #f3f3f3;
+  text-align: center;
+  line-height: 24px;
+  flex-direction: row;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    margin-right: 8px;
+    opacity: 0.5;
+  }
+
+  &.flip {
+      svg {
+          transform: scale(-1, 1);
+      }
+  }
+
+  &.active {
+    border: 1px solid #58595b;
+    color: #58595b;
     
-    &.active {
-        border: 1px solid #58595B;
-        color: #58595B;
-        
+    svg {
+      opacity: 1;
     }
+  }
 }

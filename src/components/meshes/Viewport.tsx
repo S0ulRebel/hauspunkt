@@ -9,12 +9,12 @@ import { mapLinear } from "three/src/math/MathUtils";
 import { ConfigContext } from "../../context/config-context";
 import BathroomElement from "../../models/BathroomElement";
 import BathroomElementMesh from "./BathroomElementMesh";
+import DimensionLine from "./DimensionLine";
 import LigthBulb from "./LightBulb";
 import Wall from "./Wall";
 
 const Viewport = () => {
   const [configContext, setConfigContext] = useContext(ConfigContext);
-  const [activeElelmentId, setActiveElementId] = useState<string>("");
   const { room } = configContext;
   const {
     hasRoomDivider,
@@ -48,20 +48,78 @@ const Viewport = () => {
     camera.position.set(roomWidth / 2, minRoomHeight / 2, roomDepth * factor);
   };
 
-  const deleteActiveBathroomElement = () => {
-    room.deleteBathroomElement(activeElelmentId);
+  const updateRoomInContext = () => {
+    setConfigContext({
+      ...configContext,
+      ...JSON.parse(JSON.stringify(room)),
+    });
+  };
+
+  const activeElementChangeHandler = (id: string) => {
+    room.performAction("setActiveElementId", id);
     updateRoomInContext();
   };
 
-  const onDocumentKeyDown = ({ key }: KeyboardEvent) => {
+  const elementDragHandler = (id: string, value: number) => {
+    room.performAction("setBathroomElementX", { id, value });
+    updateRoomInContext();
+  };
+
+  const deleteActiveBathroomElement = () => {
+    room.performAction("deleteBathroomElement", room.activeElelmentId);
+    updateRoomInContext();
+  };
+
+  const onDocumentKeyUp = ({ key }: KeyboardEvent) => {
     if (key === "Delete") {
       deleteActiveBathroomElement();
     }
+    if (key === "ArrowLeft") {
+      room.performAction("moveActiveElement", -1);
+      updateRoomInContext();
+    }
+    if (key === "ArrowRight") {
+      room.performAction("moveActiveElement", 1);
+      updateRoomInContext();
+    }
+  };
+
+  const getDimensionLinesForElementIndex = (index: number) => {
+    const { bathroomElements: elements } = configContext;
+    const lineY = -prewallHeight / 2 + 10;
+    const element = elements[index];
+    const elementDimensionLine = {
+      start: [-element.width / 2, lineY],
+      end: [element.width / 2, lineY],
+    };
+
+    const previousElement = index > 0 ? elements[index - 1] : null;
+    const left = previousElement
+      ? element.x - (previousElement.x + element.width)
+      : element.x;
+    const leftDimensionLine = {
+      start: [-element.width / 2 - left, lineY],
+      end: [-element.width / 2, lineY],
+      labelOffset: 10,
+    };
+
+    const nextElement = index < elements.length ? elements[index + 1] : null;
+    const right = nextElement ? nextElement.x : prewallLeft + prewallWidth;
+    const rightDimensionLine = {
+      start: [element.width / 2, lineY],
+      end: [right - element.x - element.width / 2, lineY],
+      labelOffset: -10,
+    };
+
+    return [leftDimensionLine, rightDimensionLine];
   };
 
   useEffect(() => {
-    document.addEventListener("keydown", onDocumentKeyDown, false);
-  }, [onDocumentKeyDown]);
+    document.addEventListener("keyup", onDocumentKeyUp, false);
+    return () => {
+      document.removeEventListener("keyup", onDocumentKeyUp, false);
+    };
+  }, [onDocumentKeyUp]);
 
   useThree(({ camera, size }) => {
     updateCameraPosition();
@@ -115,8 +173,9 @@ const Viewport = () => {
     const lightIntensity = 1;
     return (
       <>
-        {lightPositions.map((lightPosition) => (
+        {lightPositions.map((lightPosition, index) => (
           <LigthBulb
+            key={index}
             position={lightPosition}
             intensity={lightIntensity}
             showBulb={false}
@@ -124,54 +183,6 @@ const Viewport = () => {
         ))}
       </>
     );
-  };
-
-  const getDimensionLinesForElementIndex = (index: number) => {
-    const { bathroomElements: elements } = configContext;
-    const lineY = -140;
-    const element = elements[index];
-    const elementDimensionLine = {
-      start: [-element.width / 2, lineY],
-      end: [element.width / 2, lineY],
-    };
-
-    const previousElement = index > 0 ? elements[index - 1] : null;
-    const left = previousElement
-      ? element.x - (previousElement.x + element.width)
-      : element.x;
-    const leftDimensionLine = {
-      start: [-element.width / 2 - left, lineY],
-      end: [-element.width / 2, lineY],
-      labelOffset: 10,
-    };
-
-    const nextElement = index < elements.length ? elements[index + 1] : null;
-    const right = nextElement ? nextElement.x : prewallLeft + prewallWidth;
-    const rightDimensionLine = {
-      start: [element.width / 2, lineY],
-      end: [right - element.x - element.width / 2, lineY],
-      labelOffset: -10,
-    };
-
-    return [leftDimensionLine, rightDimensionLine];
-  };
-
-  const updateRoomInContext = () => {
-    setConfigContext({
-      ...configContext,
-      ...JSON.parse(JSON.stringify(room)),
-    });
-  };
-
-  const elementDragHandler = (id: string, value: number) => {
-    const element = room.bathroomElements.find(
-      (el: BathroomElement) => el.id === id
-    );
-    if (element) {
-      element.setX(value);
-      room.calculateMinMaxXForAllElements();
-      updateRoomInContext();
-    }
   };
 
   return (
@@ -188,7 +199,7 @@ const Viewport = () => {
       {renderSideWall([roomWidth, roomHeight / 2, roomDepth / 2])}
       {renderPrewall()}
       {hasSchacht && renderSchacht()}
-      {configContext.bathroomElements.map(
+      {configContext.room.bathroomElements.map(
         (el: BathroomElement, index: number) => (
           <BathroomElementMesh
             key={el.id}
@@ -200,11 +211,11 @@ const Viewport = () => {
               prewallDistance + prewallThickness + 0.1,
             ]}
             dimensions={[el.width, prewallHeight]}
-            dimensionLines={getDimensionLinesForElementIndex(index)}
-            active={activeElelmentId === el.id}
+            dimensionLines={room.dimensionLines}
+            active={room.activeElelmentId === el.id}
             dragHandler={(value: number) => elementDragHandler(el.id, value)}
             clickHandler={(id: string) => {
-              setActiveElementId(id);
+              activeElementChangeHandler(id);
             }}
             deleteHandler={() => deleteActiveBathroomElement()}
           />

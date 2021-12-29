@@ -97,7 +97,7 @@ const BathroomElementMesh = ({
           opacity={active ? 0.2 : hover ? 0.1 : 0}
           transparent={true}
         />
-        {active && <DeleteButton clickHandler={() => deleteHandler()} />}
+        {active && <DeleteButton position={[14, 43, 0]} clickHandler={() => deleteHandler()} />}
       </mesh>
       <Suspense fallback={""}>
         {type === "toilet" && (

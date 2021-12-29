@@ -55,7 +55,14 @@ const DimensionsInputGroup = ({
           }}
         />
         <div ref={textInputRef} className="special-input-wrapper">
-          <SpecialInput value={value} unit={unit} options={options} valueChangeHandler={(v) => handler(v) } />
+          <SpecialInput
+            value={value}
+            min={min}
+            max={max}
+            unit={unit}
+            options={options}
+            valueChangeHandler={(v) => handler(v)}
+          />
         </div>
       </div>
     </div>

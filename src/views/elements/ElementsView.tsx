@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { useContext } from "react";
 import DimensionsInputGroup from "../../components/ui/dimensions-input-group/DimensionsInputGroup";
@@ -7,11 +7,15 @@ import { ConfigContext } from "../../context/config-context";
 import BathroomElement, {
   BathroomElementType,
 } from "../../models/BathroomElement";
-import { elementsMinDistance, elementWidth } from "../../utils/constants";
+import {
+  elementsMinDistance,
+  elementWidth,
+  instalationTypes,
+} from "../../utils/constants";
 import Expandable from "../../components/ui/expandable/Expandable";
 import { SpecialInputOption } from "../../components/ui/special-input/SpecialInput";
 import Button from "../../components/ui/button/Button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Viewport from "../../components/meshes/Viewport";
 import SideSelectButton from "./side-select-button/SideSelectButton";
 import AddElementButton from "./add-element-button/AddElementButton";
@@ -29,9 +33,11 @@ const prewallHeightOptions: SpecialInputOption[] = [
 
 const ElementsView = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [configContext, setConfigContext] = useContext(ConfigContext);
-  const { room } = configContext;
 
+  const { room } = configContext;
+  console.log(configContext);
   const {
     roomWidth,
     roomHeight,
@@ -63,62 +69,77 @@ const ElementsView = () => {
   const updateRoomInContext = () => {
     setConfigContext({
       ...configContext,
-      room,
+      ...JSON.parse(JSON.stringify(room)),
     });
   };
 
   const roomlWidthHandler = (v: number) => {
-    room.setRoomWidth(v);
+    room.performAction("setRoomWidth", v);
     updateRoomInContext();
   };
 
   const roomlHeightHandler = (v: number) => {
-    room.setRoomHeight(v);
+    room.performAction("setRoomHeight", v);
     updateRoomInContext();
   };
 
   const roomlFloorThicknessHandler = (v: number) => {
-    room.setFloorThickness(v);
+    room.performAction("setFloorThickness", v);
     updateRoomInContext();
   };
 
   const schachtSideSelectionHandler = (v: "left" | "right") => {
-    room.setSchachtSide(v);
+    room.performAction("setSchachtSide", v);
     updateRoomInContext();
   };
 
   const schachtWidthHandler = (v: number) => {
-    room.setSchachtWidth(v);
+    room.performAction("setSchachtWidth", v);
     updateRoomInContext();
   };
 
   const prewallWidthHandler = (v: number) => {
-    room.setPrewallWidth(v);
+    room.performAction("setPrewallWidth", v);
     updateRoomInContext();
   };
 
   const prewallHeightHandler = (v: number) => {
-    room.setPrewallHeight(v);
+    room.performAction("setPrewallHeight", v);
     updateRoomInContext();
   };
 
   const prewallLeftHandler = (v: number) => {
-    room.setPrewallLeft(v);
+    room.performAction("setPrewallLeft", v);
     updateRoomInContext();
   };
 
   const prewallRightHandler = (v: number) => {
-    room.setPrewallRight(v);
+    room.performAction("setPrewallRight", v);
     updateRoomInContext();
   };
 
   const addBathroomElement = (type: BathroomElementType) => {
-    room.addBathroomElement(type);
-    setConfigContext({
-      ...configContext,
-      ...JSON.parse(JSON.stringify(room)),
-    });
+    room.performAction("addBathroomElement", type);
+    updateRoomInContext();
   };
+
+  useEffect(() => {
+    const instalationType = searchParams.get("type");
+    const height = searchParams.get("height");
+    const adjustable = searchParams.get("adjustable");
+    if (instalationType) {
+      const instalation = instalationTypes.find(
+        (t) => t.instalationType === +instalationType
+      );
+      if(height) instalation?.setPrewallHeight(+height);
+      if(adjustable) instalation?.setPrewallHeightAdjustable(adjustable === 'true');
+      setConfigContext({
+        ...configContext,
+        room: instalation,
+        ...JSON.parse(JSON.stringify(instalation)),
+      });
+    }
+  }, [searchParams]);
 
   return (
     <div className="room-view">
@@ -191,7 +212,7 @@ const ElementsView = () => {
             max={maxPrewallWidth}
             handler={(v) => prewallWidthHandler(v)}
           />
-          {isPrewallPositionAdjustable && (
+          {(isPrewallPositionAdjustable || true) && (
             <>
               <DimensionsInputGroup
                 label={"Prewall left:"}

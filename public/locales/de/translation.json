@@ -11,11 +11,11 @@
     "text2": "Falls keine der angebotenen Einbausituationen für Sie zutreffend ist, nehmen Sie Kontakt mit uns auf.",
     "button": "KONTAKT",
     "instalationTypes": {
-      "fullHeightPrewall": "Raumhohe Vorwand",
-      "halfHeightPrewall": "Halbhohe Vorwand",
-      "halfHeightPrewallWithSchacht": "Halbhohe Vorwand mit Schacht",
-      "roomDivider": "Raumteiler",
-      "partitionWall": "Trennwand"
+      "1": "Raumhohe Vorwand",
+      "2": "Halbhohe Vorwand",
+      "3": "Halbhohe Vorwand mit Schacht",
+      "4": "Raumteiler",
+      "5": "Trennwand"
     },
     "modal": {
       "title": "Halbhohe Vorwand",

@@ -6,6 +6,7 @@ import InstalationTypePreview from "../../components/ui/instalation-type-preview
 import { ConfigContext } from "../../context/config-context";
 import Room from "../../models/Room";
 import { RoomWithSchacht } from "../../models/RoomWithSchacht";
+import { instalationTypes } from "../../utils/constants";
 import "./InstalationView.scss";
 import PrewallHeightModal from "./prewall-height-modal/PrewallHeightModal";
 
@@ -28,7 +29,9 @@ const InstalationView = () => {
       ...configContext,
       room,
     });
-    if (room.hasFixedPrewallHeight()) navigate("/elements");
+
+    if (room?.hasFixedPrewallHeight())
+      navigate(`/elements?type=${room.instalationType}`);
     else {
       openStandardHeightsModal();
     }
@@ -36,61 +39,17 @@ const InstalationView = () => {
   const handleContactClick = () => alert("contact");
 
   const handlePrewallHeightSelection = (height: number) => {
+    const value = height ? height : 116;
+    const adjustableHeight = height === 0 ? true : false;
     if (configContext.room) {
-      const value = height ? height : 116;
-      if (height === 0) configContext.room.setPrewallHeightAdjustable(true);
       configContext.room.setPrewallHeight(value);
+      if (height === 0) configContext.room.setPrewallHeightAdjustable(true);
     }
     closeStandardHeightsModal();
-    navigate("/elements");
+    navigate(
+      `/elements?type=${configContext.room.instalationType}&height=${value}&adjustable=${adjustableHeight}`
+    );
   };
-
-  const instalationTypes = [];
-  instalationTypes.push(
-    new Room(
-      t("instalationPage.instalationTypes.fullHeightPrewall"),
-      true,
-      false,
-      false,
-      false
-    )
-  );
-
-  instalationTypes.push(
-    new Room(
-      t("instalationPage.instalationTypes.halfHeightPrewall"),
-      false,
-      false,
-      false,
-      false
-    )
-  );
-
-  instalationTypes.push(
-    new RoomWithSchacht(
-      t("instalationPage.instalationTypes.halfHeightPrewallWithSchacht")
-    )
-  );
-
-  instalationTypes.push(
-    new Room(
-      t("instalationPage.instalationTypes.roomDivider"),
-      false,
-      false,
-      true,
-      false
-    )
-  );
-
-  instalationTypes.push(
-    new Room(
-      t("instalationPage.instalationTypes.partitionWall"),
-      true,
-      false,
-      false,
-      true
-    )
-  );
 
   return (
     <div id="instalation" className="content-wrapper">
@@ -114,7 +73,9 @@ const InstalationView = () => {
             hasSchacht={room.hasSchacht}
             hasRoomDivider={room.hasRoomDivider}
             hasPartitionWall={room.hasPartitionWall}
-            instalationType={room.instalationType}
+            instalationType={t(
+              `instalationPage.instalationTypes.${room.instalationType}`
+            )}
             clickHandler={() => handleInstalationClick(room)}
           />
         ))}

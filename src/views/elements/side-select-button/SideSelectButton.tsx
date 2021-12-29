@@ -1,5 +1,6 @@
 import React from "react";
-import './SideSelectButton.scss';
+import { ReactComponent as IconSchacht } from "./../../../assets/icons/schacht.svg";
+import "./SideSelectButton.scss";
 
 interface SideSelectButtonProps {
   side: "left" | "right";
@@ -16,10 +17,10 @@ const SideSelectButton = ({
 }: SideSelectButtonProps) => {
   return (
     <div
-      className={`side-select-button${active ? " active" : ""}`}
+      className={`side-select-button${active ? " active" : ""}${side === "right" ? "" :" flip"}`}
       onClick={() => clickHandler()}
     >
-      {side === "left" ? "L " : "R "}
+      <IconSchacht />
       {title}
     </div>
   );

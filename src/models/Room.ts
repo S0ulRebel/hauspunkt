@@ -21,6 +21,7 @@ class Room {
 
   //prewall parameters
   prewallWidth: number = 200;
+  defaultMinPrewallWidth: number = 100;
   minPrewallWidth: number = 100;
   maxPrewallWidth: number = 200;
   minPrewallHeight: number = 86;
@@ -34,7 +35,7 @@ class Room {
   dividedRoomPrewallDistance = 150;
 
   // instalation type parameters
-  instalationType: string;
+  instalationType: number;
   isPrewallFullHeight: Boolean;
   hasSchacht: Boolean;
   hasRoomDivider: Boolean;
@@ -45,9 +46,11 @@ class Room {
   isPrewallPositionAdjustable: boolean = true;
 
   bathroomElements: BathroomElement[] = [];
+  activeElelmentId: string = "";
+  dimensionLines: any[] = [];
 
   constructor(
-    instalationType: string,
+    instalationType: number,
     isPrewallFullHeight = false,
     hasSchacht = false,
     hasRoomDivider = false,
@@ -58,7 +61,6 @@ class Room {
     this.hasRoomDivider = hasRoomDivider;
     this.hasPartitionWall = hasPartitionWall;
     this.hasSchacht = hasSchacht;
-    this.setPrewallPositionAdjustable(true);
     this.init();
   }
 
@@ -71,10 +73,93 @@ class Room {
     this.setPrewallRight(this.roomWidth - this.prewallWidth);
   }
 
+  performAction(actionType: string, payload: any) {
+    (this as any)[actionType](payload);
+    this.update();
+  }
+
+  update() {
+    this.calculateMinPrewallWidth();
+    this.calculateMaxPrewallWidth();
+    this.calculateMinMaxXForAllElements();
+    this.calculatePrewallMaxLeftAndRight();
+    this.prewallWidth = clamp(
+      this.prewallWidth,
+      this.minPrewallWidth,
+      this.maxPrewallWidth
+    );
+    this.prewallLeft = clamp(this.prewallLeft, 0, this.maxPrewallLeft);
+    this.prewallRight = clamp(this.prewallRight, 0, this.maxPrewallRight);
+    this.calculateDimensionLinesForActiveElement();
+  }
+
+  calculateMinPrewallWidth() {
+    const elementsHorizontalSpace = this.getSpaceOccupiedByElements();
+    this.minPrewallWidth = Math.max(
+      this.defaultMinPrewallWidth,
+      elementsHorizontalSpace
+    );
+  }
+
+  calculateMaxPrewallWidth() {
+    this.maxPrewallWidth = this.roomWidth;
+  }
+
+  calculatePrewallMaxLeftAndRight() {
+    const occupiedSpace = this.getSpaceOccupiedByElements();
+    const min = Math.max(this.minPrewallWidth, occupiedSpace);
+    this.maxPrewallLeft = this.roomWidth - min;
+    this.maxPrewallRight = this.roomWidth - min;
+  }
+
+  calculateMinMaxXForAllElements() {
+    this.bathroomElements.forEach((el: BathroomElement, index) => {
+      const currentElement = this.bathroomElements[index];
+      const [minX, maxX] = this.getMinMaxXForElementIndex(index);
+      currentElement.setMinX(minX);
+      currentElement.setMaxX(maxX);
+    });
+  }
+
+  calculateDimensionLinesForActiveElement() {
+    if (!this.activeElelmentId) {
+      this.dimensionLines = [];
+      return;
+    }
+    const index = this.bathroomElements.findIndex(
+      (e: BathroomElement) => e.id === this.activeElelmentId
+    );
+    const element = this.bathroomElements[index];
+    const lineY = -this.prewallHeight / 2 + 10;
+
+    const previousElement = index > 0 ? this.bathroomElements[index - 1] : null;
+    const left = previousElement
+      ? element.x - (previousElement.x + element.width)
+      : element.x - this.prewallLeft;
+    const leftDimensionLine = {
+      start: [-element.width / 2 - left, lineY],
+      end: [-element.width / 2, lineY],
+      labelOffset: 10,
+    };
+
+    const nextElement =
+      index < this.bathroomElements.length - 1
+        ? this.bathroomElements[index + 1]
+        : null;
+    const right = nextElement
+      ? nextElement.x
+      : this.prewallLeft + this.prewallWidth;
+    const rightDimensionLine = {
+      start: [element.width / 2, lineY],
+      end: [right - element.x - element.width / 2, lineY],
+      labelOffset: -10,
+    };
+
+    this.dimensionLines = [leftDimensionLine, rightDimensionLine];
+  }
+
   setRoomWidth(width: number) {
     this.roomWidth = clamp(width, this.minRoomWidth, this.maxRoomWidth);
-    this.calculatePrewallMaxLeftAndRight();
-    this.calculateMaxPrewallWidth();
   }
 
   setRoomHeight(height: number) {
@@ -92,10 +177,6 @@ class Room {
     );
   }
 
-  calculateMaxPrewallWidth() {
-    this.maxPrewallWidth = this.roomWidth;
-  }
-
   setPrewallHeightAdjustable(isAdjustable: boolean) {
     this.isPrewallHeightAdjustable = isAdjustable;
   }
@@ -109,7 +190,13 @@ class Room {
   }
 
   setPrewallWidth(width: number) {
-    this.prewallWidth = clamp(width, this.minPrewallWidth, this.roomWidth);
+    const elementsHorizontalSpace = this.getSpaceOccupiedByElements();
+    const min = Math.max(this.minPrewallWidth, elementsHorizontalSpace);
+    const diff = width - this.prewallWidth;
+    this.bathroomElements.forEach((e) => {
+      e.setX(e.x + diff);
+    });
+    this.prewallWidth = clamp(width, min, this.roomWidth);
     this.prewallRight = this.roomWidth - this.prewallWidth;
     if (this.prewallWidth + this.prewallLeft > this.roomWidth) {
       this.prewallLeft = this.roomWidth - this.prewallWidth;
@@ -120,13 +207,12 @@ class Room {
     this.prewallHeight = clamp(height, this.minPrewallHeight, this.roomHeight);
   }
 
-  calculatePrewallMaxLeftAndRight() {
-    this.maxPrewallLeft = this.roomWidth - this.minPrewallWidth;
-    this.maxPrewallRight = this.roomWidth - this.minPrewallWidth;
-  }
-
   setPrewallLeft(left: number) {
     if (left > this.maxPrewallLeft) return;
+    const diff = left - this.prewallLeft;
+    this.bathroomElements.forEach((e) => {
+      e.setX(e.x + diff);
+    });
     this.prewallLeft = left;
     if (this.prewallWidth + this.prewallLeft > this.roomWidth) {
       this.setPrewallWidth(this.roomWidth - this.prewallLeft);
@@ -135,7 +221,12 @@ class Room {
   }
 
   setPrewallRight(right: number) {
-    if (right <= this.maxPrewallRight) this.prewallRight = right;
+    if (right > this.maxPrewallRight) return;
+    const diff = right - this.prewallRight;
+    this.bathroomElements.forEach((e) => {
+      e.setX(e.x - diff);
+    });
+    this.prewallRight = right;
     if (this.prewallWidth + this.prewallRight > this.roomWidth) {
       this.setPrewallWidth(this.roomWidth - this.prewallRight);
     }
@@ -146,10 +237,6 @@ class Room {
     this.prewallDistance = distance;
   }
 
-  getStartXForNewElement() {
-    return 0;
-  }
-
   sortBathroomElementsByX() {
     this.bathroomElements = this.bathroomElements.sort((a, b) => a.x - b.x);
   }
@@ -158,14 +245,17 @@ class Room {
     const { length } = this.bathroomElements;
     const minX =
       index === 0
-        ? elementsMinDistance
+        ? this.prewallLeft + elementsMinDistance
         : this.bathroomElements[index - 1].x +
           elementWidth +
           elementsMinDistance;
 
     const maxX =
       index === length - 1
-        ? this.roomWidth - elementWidth - elementsMinDistance
+        ? this.prewallLeft +
+          this.prewallWidth -
+          elementWidth -
+          elementsMinDistance
         : this.bathroomElements[index + 1].x -
           elementWidth -
           elementsMinDistance;
@@ -173,13 +263,27 @@ class Room {
     return [minX, maxX];
   }
 
-  calculateMinMaxXForAllElements() {
-    this.bathroomElements.forEach((el: BathroomElement, index) => {
-      const currentElement = this.bathroomElements[index];
-      const [minX, maxX] = this.getMinMaxXForElementIndex(index);
-      currentElement.setMinX(minX);
-      currentElement.setMaxX(maxX);
-    });
+  getSpaceOccupiedByElements() {
+    const numElements = this.bathroomElements.length;
+    if (numElements < 1) return this.minPrewallWidth;
+    const firstElement = this.bathroomElements[0];
+    const lastElement = this.bathroomElements[numElements - 1];
+    const hSpace =
+      lastElement.x - firstElement.x + elementWidth + elementsMinDistance * 2;
+    return hSpace;
+  }
+
+  setBathroomElementX({ id, value }: { id: string; value: number }) {
+    const element = this.bathroomElements.find(
+      (el: BathroomElement) => el.id === id
+    );
+    if (element) {
+      element.setX(value);
+    }
+  }
+
+  setActiveElementId(id: string) {
+    this.activeElelmentId = id;
   }
 
   addBathroomElement(type: BathroomElementType) {
@@ -190,15 +294,31 @@ class Room {
     newElement.setMinX(minX);
     newElement.setMaxX(maxX);
     newElement.setX(minX);
-    if(newElement.x > maxX) this.bathroomElements.pop();
+    if (newElement.x > maxX) this.bathroomElements.pop();
     this.sortBathroomElementsByX();
-    this.calculateMinMaxXForAllElements();
   }
 
   deleteBathroomElement(id: string) {
-    const result = this.bathroomElements.filter(e => e.id !== id);
+    const result = this.bathroomElements.filter((e) => e.id !== id);
     this.bathroomElements = [...result];
+    this.activeElelmentId = '';
     this.calculateMinMaxXForAllElements();
+  }
+
+  clearBathroomElements() {
+    this.bathroomElements = [];
+  }
+
+  moveActiveElement(value: number) {
+    const element = this.bathroomElements.find(
+      (e) => e.id === this.activeElelmentId
+    );
+    if (element) {
+      const newX = element.x + value;
+      const x = clamp(newX, element.minX, element.maxX);
+      element.setX(x);
+    }
+    this.update();
   }
 
   isRoomDivided() {
